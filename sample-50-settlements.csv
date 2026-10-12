@@ -1,0 +1,54 @@
+Debit Note Number,PO Number,Platform,SKU,Product Name,Deduction Reason,Quantity,Rate,Total Deducted Amount,Date,DC Location
+DN-BLK-1001,PO-2026-9001,Blinkit,SNK-POTATO-SALT-80G,Classic Salted Potato Chips 80g,RTV - Dark Store Damaged,45,40,1800,2026-10-01,Gurugram DC-01
+DN-BLK-1002,PO-2026-9002,Blinkit,SNK-POTATO-CREAM-80G,Sour Cream & Onion Chips 80g,RTV - Return to Vendor,60,40,2400,2026-10-01,South Delhi Hub
+DN-BLK-1003,PO-2026-9003,Blinkit,BVG-COLDBREW-MOCHA-200,Artisan Cold Brew Mocha 200ml,Leakage & Breakage,30,110,3300,2026-10-01,Noida Sector 62
+DN-ZPT-2004,PO-2026-9004,Zepto,NUT-CASHEW-ROASTED-200,Roasted Salted Cashews 200g,RTV - Customer Cancellation,25,280,7000,2026-10-02,Mumbai Central DC
+DN-ZPT-2004,PO-2026-9004,Zepto,NUT-CASHEW-ROASTED-200,Roasted Salted Cashews 200g,RTV - Customer Cancellation,25,280,7000,2026-10-05,Mumbai Central DC
+DN-SWG-3005,PO-2026-9005,Instamart,PROT-BAR-CHOC-60G,High Protein Dark Chocolate Bar 60g,Expiry Shelf-Life Breach,120,95,11400,2026-10-02,Bengaluru Bellandur Hub
+DN-SWG-3006,PO-2026-9006,Instamart,PROT-BAR-PEANUT-60G,Peanut Butter Protein Bar 60g,RTV - Packaging Blemish,80,95,7600,2026-10-02,Bengaluru Koramangala
+DN-BLK-1007,PO-2026-9007,Blinkit,SNK-MAKHANA-CHEESE-70,Cheese & Herbs Roasted Makhana 70g,Shortage Inward Adjustment,50,85,4250,2026-10-02,Gurugram DC-02
+DN-ZPT-2008,,Zepto,,Co-Op In-App Banner Ad Offset,Ad Spend Co-Op Marketing Fee,1,12000,12000,2026-10-03,Corporate HQ Offset
+DN-BLK-1009,PO-2026-9009,Blinkit,BEV-KOMBUCHA-GINGER-250,Organic Ginger Kombucha 250ml,Broken In Transit,40,135,5400,2026-10-03,South Delhi Hub
+DN-SWG-3010,PO-2026-9010,Instamart,SNK-NACHO-JALAPENO-150,Jalapeno Cheese Nachos 150g,RTV - Customer Rejected,90,75,6750,2026-10-03,Hyderabad Hitec City
+DN-ZPT-2011,PO-2026-9011,Zepto,ORG-HONEY-WILD-500G,Raw Wild Forest Honey 500g,Carton Seal Tampered,20,320,6400,2026-10-03,Pune Viman Nagar Hub
+DN-BLK-1012,PO-2026-9012,Blinkit,NUT-ALMOND-SMOKED-200,Hickory Smoked Almonds 200g,RTV - Dark Store Damaged,35,260,9100,2026-10-04,West Delhi Hub
+DN-SWG-3013,PO-2026-9013,Instamart,BEV-COCONUT-WATER-300,Pure Tender Coconut Water 300ml,Cap Leakage,75,55,4125,2026-10-04,Chennai OMR Hub
+DN-ZPT-2014,PO-2026-9014,Zepto,SNK-TRAILMIX-BERRY-150,Super Berries Trail Mix 150g,RTV - Customer Cancellation,50,180,9000,2026-10-04,Mumbai Andheri Hub
+DN-ZPT-2014,PO-2026-9014,Zepto,SNK-TRAILMIX-BERRY-150,Super Berries Trail Mix 150g,RTV - Customer Cancellation,50,180,9000,2026-10-08,Mumbai Andheri Hub
+DN-BLK-1015,PO-2026-9015,Blinkit,TEA-MATCHA-PREMIUM-50G,Japanese Ceremonial Matcha 50g,Packaging Crushed,15,550,8250,2026-10-04,Gurugram DC-03
+DN-SWG-3016,PO-2026-9016,Instamart,SNK-RICE-CRACKER-90G,Seaweed Brown Rice Crackers 90g,RTV - Near Expiry,70,60,4200,2026-10-05,Kolkata Salt Lake Hub
+DN-ZPT-2017,PO-2026-9017,Zepto,NUT-PISTA-ROASTED-200,California Roasted Pistachios 200g,Moisture Contamination,30,340,10200,2026-10-05,Bengaluru Indiranagar
+DN-BLK-1018,PO-2026-9018,Blinkit,BVG-COLDBREW-HAZEL-200,Cold Brew Hazelnut 200ml,Transit Damage,50,110,5500,2026-10-05,Noida Sector 62
+DN-SWG-3019,,Instamart,,Brand Day Slotting Fee Offset,Ad Spend Co-Op Marketing Fee,1,15000,15000,2026-10-05,Corporate HQ Offset
+DN-BLK-1020,PO-2026-9020,Blinkit,SNK-POPCORN-TRUFFLE-80,Black Truffle Popcorn 80g,RTV - Dark Store Damaged,65,70,4550,2026-10-05,South Delhi Hub
+DN-ZPT-2021,PO-2026-9021,Zepto,BEV-ICEDTEA-PEACH-300,Sparkling Peach Iced Tea 300ml,Dent on Can,85,60,5100,2026-10-06,Mumbai Bandra Hub
+DN-SWG-3022,PO-2026-9022,Instamart,PROT-COOKIES-OAT-100,Oats & Almond Protein Cookie 100g,RTV - Broken Pieces,100,80,8000,2026-10-06,Bengaluru Bellandur Hub
+DN-BLK-1023,PO-2026-9023,Blinkit,SNK-MAKHANA-SALT-70G,Himalayan Pink Salt Makhana 70g,Shortage Inward Adjustment,40,85,3400,2026-10-06,Gurugram DC-01
+DN-ZPT-2024,PO-2026-9024,Zepto,ORG-CHIA-SEEDS-250G,Black Raw Chia Seeds 250g,Torn Outer Pouch,45,140,6300,2026-10-06,Delhi Dwarka Hub
+DN-SWG-3025,PO-2026-9025,Instamart,SNK-CHIPS-PERIPERI-80,Peri Peri Kettle Chips 80g,RTV - Return to Vendor,95,40,3800,2026-10-06,Hyderabad Gachibowli
+DN-BLK-1026,PO-2026-9026,Blinkit,BVG-COLDBREW-CLASS-200,Classic Black Cold Brew 200ml,Cap Leakage,60,95,5700,2026-10-07,South Delhi Hub
+DN-ZPT-2027,PO-2026-9027,Zepto,NUT-WALNUT-KERNELS-200,Chilean Walnut Kernels 200g,RTV - Customer Cancellation,35,310,10850,2026-10-07,Mumbai Central DC
+DN-SWG-3028,PO-2026-9028,Instamart,BEV-KOMBUCHA-BERRY-250,Mixed Berry Kombucha 250ml,Carbonation Leakage,50,135,6750,2026-10-07,Bengaluru Whitefield
+DN-BLK-1029,PO-2026-9029,Blinkit,SNK-QUINOA-CHIPS-100,Creamy Cheddar Quinoa Chips 100g,RTV - Dark Store Damaged,55,65,3575,2026-10-07,Noida Sector 62
+DN-ZPT-2030,PO-2026-9030,Zepto,TEA-CHAMOMILE-BAGS-25,Chamomile Calming Tea 25 Bags,Outer Box Crushed,40,190,7600,2026-10-07,Pune Koregaon Park
+DN-SWG-3031,PO-2026-9031,Instamart,PROT-BAR-COCONUT-60G,Toasted Coconut Protein Bar 60g,Expiry Shelf-Life Breach,110,95,10450,2026-10-08,Chennai Anna Nagar
+DN-BLK-1032,PO-2026-9032,Blinkit,NUT-BERRY-MIX-200G,Dried Cranberry & Blueberry Mix 200g,RTV - Customer Return,30,220,6600,2026-10-08,West Delhi Hub
+DN-BLK-1032,PO-2026-9032,Blinkit,NUT-BERRY-MIX-200G,Dried Cranberry & Blueberry Mix 200g,RTV - Customer Return,30,220,6600,2026-10-10,West Delhi Hub
+DN-ZPT-2033,PO-2026-9033,Zepto,SNK-POPCORN-CARAMEL-80,Sea Salt Caramel Popcorn 80g,Transit Damage,70,70,4900,2026-10-08,Mumbai Thane Hub
+DN-SWG-3034,PO-2026-9034,Instamart,BEV-ICEDTEA-LEMON-300,Zesty Lemon Iced Tea 300ml,RTV - Dent on Can,80,60,4800,2026-10-08,Bengaluru Indiranagar
+DN-BLK-1035,PO-2026-9035,Blinkit,SNK-MAKHANA-PEPPER-70,Cracked Black Pepper Makhana 70g,Shortage Inward Adjustment,45,85,3825,2026-10-08,Gurugram DC-04
+DN-ZPT-2036,,Zepto,,Flash Push Notification Fee,Ad Spend Co-Op Marketing Fee,1,9500,9500,2026-10-09,Corporate HQ Offset
+DN-SWG-3037,PO-2026-9037,Instamart,PROT-SHAKE-VANILLA-250,Ready to Drink Vanilla Shake 250ml,Seal Leakage,60,110,6600,2026-10-09,Hyderabad Hitec City
+DN-BLK-1038,PO-2026-9038,Blinkit,SNK-CHIPS-TRUFFLE-80,Black Truffle Potato Chips 80g,RTV - Dark Store Damaged,50,60,3000,2026-10-09,South Delhi Hub
+DN-ZPT-2039,PO-2026-9039,Zepto,ORG-PUMPKIN-SEEDS-200,Roasted Raw Pumpkin Seeds 200g,RTV - Return to Vendor,40,160,6400,2026-10-09,Mumbai Central DC
+DN-SWG-3040,PO-2026-9040,Instamart,BEV-ALMOND-MILK-1000,Unsweetened Almond Milk 1000ml,Tetrapack Leakage,35,175,6125,2026-10-09,Bengaluru Bellandur Hub
+DN-BLK-1041,PO-2026-9041,Blinkit,TEA-GREEN-HIBISCUS-50,Hibiscus Green Tea Leaves 50g,Moisture Damage,25,240,6000,2026-10-10,Noida Sector 62
+DN-ZPT-2042,PO-2026-9042,Zepto,SNK-CHICKPEA-PUFFS-90,Smoky BBQ Chickpea Puffs 90g,RTV - Packaging Blemish,65,55,3575,2026-10-10,Delhi Vasant Kunj Hub
+DN-SWG-3043,PO-2026-9043,Instamart,PROT-BAR-CARAMEL-60G,Salted Caramel Whey Bar 60g,Expiry Shelf-Life Breach,105,95,9975,2026-10-10,Kolkata Salt Lake Hub
+DN-BLK-1044,PO-2026-9044,Blinkit,BEV-COLDBREW-OAT-200ML,Oat Milk Cold Brew Latte 200ml,Transit Breakage,55,120,6600,2026-10-10,South Delhi Hub
+DN-ZPT-2045,PO-2026-9045,Zepto,NUT-MAMRA-ALMOND-200G,Premium Mamra Almonds 200g,RTV - Customer Cancellation,20,480,9600,2026-10-10,Mumbai Bandra Hub
+DN-SWG-3046,PO-2026-9046,Instamart,SNK-MAKHANA-MINT-70G,Pudina Mint Roasted Makhana 70g,Shortage Inward Adjustment,50,85,4250,2026-10-10,Bengaluru Koramangala
+DN-BLK-1047,PO-2026-9047,Blinkit,ORG-FLAX-SEEDS-250G,Organic Golden Flax Seeds 250g,RTV - Return to Vendor,40,90,3600,2026-10-10,Gurugram DC-02
+DN-ZPT-2048,PO-2026-9048,Zepto,BEV-ENERGY-SPARKLING-250,Natural Berry Energy Drink 250ml,Dent on Can,70,75,5250,2026-10-11,Mumbai Central DC
+DN-SWG-3049,PO-2026-9049,Instamart,SNK-SOYA-CRISPS-90G,Tangy Tomato Soya Crisps 90g,RTV - Dark Store Damaged,80,45,3600,2026-10-11,Hyderabad Hitec City
+DN-BLK-1050,PO-2026-9050,Blinkit,BVG-KOMBUCHA-MANGO-250,Alphonso Mango Kombucha 250ml,Packaging Seal Compromised,45,135,6075,2026-10-11,South Delhi Hub

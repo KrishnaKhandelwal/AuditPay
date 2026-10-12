@@ -1,0 +1,9 @@
+Debit Note Number,PO Number,Platform,SKU,Product Name,Deduction Reason,Quantity,Rate,Total Deducted Amount,Date,DC Location
+DN-BLK-98210,PO-2024-8812,Blinkit,SNK-CHIPS-100G,Artisan Kettle Sea Salt Chips 100g,RTV - Dark Store Return,120,65,7800,2026-10-02,Gurugram DC-04
+DN-BLK-98211,PO-2024-8815,Blinkit,BVG-COLDBREW-200ML,Cold Brew Vanilla 200ml Glass Bottle,Damage & Leakage Claim,85,110,9350,2026-10-03,South Delhi Hub
+DN-ZPT-44019,PO-2024-8820,Zepto,NUT-ALMOND-250G,California Roasted Almonds 250g,RTV - Customer Cancellation,50,240,12000,2026-10-04,Mumbai Central Hub
+DN-ZPT-44019,PO-2024-8820,Zepto,NUT-ALMOND-250G,California Roasted Almonds 250g,RTV - Customer Cancellation,50,240,12000,2026-10-07,Mumbai Central Hub
+DN-SWG-33012,PO-2024-8833,Instamart,PROT-BAR-BERRY-60G,Superberry 20g Whey Protein Bar,Expiry Shelf-Life Breach,150,90,13500,2026-10-05,Bengaluru Bellandur DC
+DN-BLK-98240,PO-2024-8840,Blinkit,SNK-MAKHANA-70G,Roasted Peri Peri Makhana 70g,Shortage Inward Adjustment,40,85,3400,2026-10-06,Noida Sector 62
+DN-ZPT-99120,,Zepto,,Unspecified Marketing Deduction,Ad Spend Co-Op Marketing Fee,1,8500,8500,2026-10-06,Corporate HQ Offset
+DN-SWG-33045,PO-2024-8850,Instamart,SNK-CHIPS-100G,Artisan Kettle Sea Salt Chips 100g,RTV - Packaging Blemish,60,65,3900,2026-10-08,Hyderabad Hitec City
