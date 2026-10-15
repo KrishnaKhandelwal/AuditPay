@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ShieldAlert, UploadCloud, LayoutDashboard, Home as HomeIcon, Tag } from 'lucide-react';
+import { ShieldAlert, UploadCloud, LayoutDashboard, Home as HomeIcon, Tag, HelpCircle } from 'lucide-react';
 import { useAudit } from '@/context/AuditContext';
 
 interface NavbarProps {
@@ -34,6 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
   const isHomeActive = pathname === '/' && currentView === 'upload';
   const isDashboardActive = pathname === '/' && currentView === 'dashboard';
   const isPricingActive = pathname === '/pricing';
+  const isHowItWorksActive = pathname === '/how-it-works';
 
   return (
     <header className="border-b border-slate-200/80 bg-white/75 backdrop-blur-xl sticky top-0 z-50 shadow-xs">
@@ -85,6 +86,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
             <LayoutDashboard className="w-3.5 h-3.5" />
             <span>Dashboard</span>
           </button>
+
+          {/* How It Works Link */}
+          <Link
+            href="/how-it-works"
+            className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+              isHowItWorksActive
+                ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>How It Works</span>
+          </Link>
 
           {/* Pricing Link */}
           <Link
