@@ -241,7 +241,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number (UPI / Receipts)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Mobile Number</label>
                   <div className="flex">
                     <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium">
                       +91
@@ -262,8 +262,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
 
               {/* Payment Methods Info */}
               <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-100">
-                <span>Supports PhonePe, GPay, Paytm, Cards & NetBanking</span>
-                <span className="font-semibold text-emerald-700">Live Secure</span>
+                <span>Supports Cards, NetBanking, UPI & EMI</span>
+                <span className="font-semibold text-emerald-700">100% Secure</span>
               </div>
 
               {/* Submit Button */}
