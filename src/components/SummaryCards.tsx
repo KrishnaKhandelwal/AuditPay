@@ -5,10 +5,11 @@ import { IndianRupee, AlertCircle, Ghost, Repeat, TrendingDown } from 'lucide-re
 import { AuditSummary } from '@/types/audit';
 
 interface SummaryCardsProps {
-  summary: AuditSummary;
+  summary: AuditSummary | null;
 }
 
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
+  const hasValidData = Boolean(summary && summary.totalRowsProcessed > 0);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       
@@ -27,14 +28,14 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-xl font-bold text-[#E11D48]">₹</span>
           <span className="text-3xl font-extrabold text-[#881337] tracking-tight">
-            {summary.totalLeakageIdentified.toLocaleString('en-IN')}
+            {hasValidData && summary ? summary.totalLeakageIdentified.toLocaleString('en-IN') : '0'}
           </span>
         </div>
 
         <div className="mt-3.5 pt-2.5 border-t border-[#FECDD3]/70 flex items-center justify-between text-xs text-[#9F1239]">
-          <span className="font-medium">{summary.discrepanciesCount} discrepancies</span>
+          <span className="font-medium">{hasValidData && summary ? `${summary.discrepanciesCount} discrepancies` : 'No data'}</span>
           <span className="font-bold bg-white/80 px-2 py-0.5 rounded-full text-[11px] border border-[#FECDD3] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-            {summary.estimatedRecoveryPercent}% of deductions
+            {hasValidData && summary ? `${summary.estimatedRecoveryPercent}% of deductions` : 'No data'}
           </span>
         </div>
       </div>
@@ -54,12 +55,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#CA8A04]">₹</span>
           <span className="text-3xl font-extrabold text-[#713F12] tracking-tight">
-            {summary.ghostReturnsAmount.toLocaleString('en-IN')}
+            {hasValidData && summary ? summary.ghostReturnsAmount.toLocaleString('en-IN') : '0'}
           </span>
         </div>
 
         <p className="mt-3.5 pt-2.5 border-t border-[#FEF08A]/70 text-xs text-[#854D0E]/90 leading-relaxed font-medium">
-          Deducted by platform, but 0 physical units received at warehouse.
+          {hasValidData ? 'Deducted by platform, but 0 physical units received at warehouse.' : 'No data (upload CSV to analyze)'}
         </p>
       </div>
 
@@ -78,12 +79,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#0284C7]">₹</span>
           <span className="text-3xl font-extrabold text-[#0C4A6E] tracking-tight">
-            {summary.shortReceiptsAmount.toLocaleString('en-IN')}
+            {hasValidData && summary ? summary.shortReceiptsAmount.toLocaleString('en-IN') : '0'}
           </span>
         </div>
 
         <p className="mt-3.5 pt-2.5 border-t border-[#BAE6FD]/70 text-xs text-[#0369A1]/90 leading-relaxed font-medium">
-          Physical inward count was lower than platform deduction claim.
+          {hasValidData ? 'Physical inward count was lower than platform deduction claim.' : 'No data (upload CSV to analyze)'}
         </p>
       </div>
 
@@ -102,12 +103,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#9333EA]">₹</span>
           <span className="text-3xl font-extrabold text-[#581C87] tracking-tight">
-            {(summary.duplicateDeductionsAmount + summary.rateOverchargesAmount).toLocaleString('en-IN')}
+            {hasValidData && summary ? (summary.duplicateDeductionsAmount + summary.rateOverchargesAmount).toLocaleString('en-IN') : '0'}
           </span>
         </div>
 
         <p className="mt-3.5 pt-2.5 border-t border-[#E9D5FF]/70 text-xs text-[#6B21A8]/90 leading-relaxed font-medium">
-          Repeated debit notes or unapproved co-op ad-spend chargebacks.
+          {hasValidData ? 'Repeated debit notes or unapproved co-op ad-spend chargebacks.' : 'No data (upload CSV to analyze)'}
         </p>
       </div>
 

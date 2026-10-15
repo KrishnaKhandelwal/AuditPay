@@ -109,7 +109,7 @@ export default function Home() {
             fileName={activeFileName} 
             onFinish={handleLoadingFinish} 
           />
-        ) : (!hasData || currentView === 'upload') ? (
+        ) : currentView === 'upload' ? (
           /* State 2: Initial Dropzone Screen */
           <div>
             <FileUploadSection onAuditReady={handleAuditReady} />
@@ -150,12 +150,10 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          /* State 3: Audited Dashboard */
+          /* State 3: Dashboard (Shows data if uploaded, or empty 'no data' state if not uploaded yet) */
           <div className="space-y-6">
-            {/* Subtle Pastel KPI Cards */}
-
-            {/* Subtle Pastel KPI Cards */}
-            {summary && <SummaryCards summary={summary} />}
+            {/* KPI Cards (renders 'No data' if no file uploaded) */}
+            <SummaryCards summary={summary} />
 
             {/* Discrepancy Table */}
             <DiscrepancyTable 

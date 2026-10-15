@@ -25,15 +25,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
 
   const handleDashboardClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!hasData) return;
     setCurrentView('dashboard');
     if (pathname !== '/') {
       router.push('/');
     }
   };
 
-  const isHomeActive = pathname === '/' && (!hasData || currentView === 'upload');
-  const isDashboardActive = pathname === '/' && hasData && currentView === 'dashboard';
+  const isHomeActive = pathname === '/' && currentView === 'upload';
+  const isDashboardActive = pathname === '/' && currentView === 'dashboard';
   const isPricingActive = pathname === '/pricing';
 
   return (
@@ -74,20 +73,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
             <span>Home</span>
           </button>
 
-          {/* Conditional Dashboard Link - shown whenever a file is uploaded so user can return from Pricing */}
-          {hasData && (
-            <button
-              onClick={handleDashboardClick}
-              className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                isDashboardActive
-                  ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>Dashboard</span>
-            </button>
-          )}
+          {/* Dashboard Link - ALWAYS visible at all times */}
+          <button
+            onClick={handleDashboardClick}
+            className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+              isDashboardActive
+                ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>Dashboard</span>
+          </button>
 
           {/* Pricing Link */}
           <Link
