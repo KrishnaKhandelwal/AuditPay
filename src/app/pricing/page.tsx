@@ -204,34 +204,6 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Custom Assistance & Enterprise Help CTA Block */}
-        <div className="rounded-3xl p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-slate-700/60">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-400 flex items-center justify-center flex-shrink-0 shadow-xs">
-              <Building2 className="w-6 h-6 stroke-[2.2]" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h4 className="text-base font-bold text-white">Need a Custom Setup or Multi-Brand Audit?</h4>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                  Dedicated Support
-                </span>
-              </div>
-              <p className="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
-                Managing high volume dark stores, multiple corporate GSTINs, or custom ERP warehouse exports? Talk with our quick-commerce reconciliation specialists.
-              </p>
-            </div>
-          </div>
-
-          <a
-            href="mailto:support@auditpay.in?subject=Custom%20Enterprise%20Audit%20Inquiry"
-            className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-xs font-bold bg-white hover:bg-slate-100 text-slate-900 shadow-md whitespace-nowrap transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-          >
-            <HelpCircle className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Talk to an Audit Specialist</span>
-          </a>
-        </div>
-
       </main>
 
       {/* Footer */}
