@@ -4,17 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Sparkles, Check, ShieldCheck } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
-import { PaymentModal } from '@/components/PaymentModal';
+import { openRazorpayCheckout } from '@/lib/razorpayCheckout';
 
 export default function PricingPage() {
-  const [selectedPlan, setSelectedPlan] = useState<{
-    name: string;
-    price: string;
-    amount: number;
-    auditsLimit: string;
-    platformsLimit: string;
-  } | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successPaymentId, setSuccessPaymentId] = useState<string | null>(null);
+  const [activePlanName, setActivePlanName] = useState<string | null>(null);
 
   const plans = [
     {
@@ -189,14 +183,18 @@ export default function PricingPage() {
               {/* Action Button */}
               <button
                 onClick={() => {
-                  setSelectedPlan({
-                    name: plan.name,
-                    price: plan.price,
+                  openRazorpayCheckout({
+                    planName: plan.name,
                     amount: plan.amount,
-                    auditsLimit: plan.auditsLimit,
-                    platformsLimit: plan.platformsLimit,
+                    priceDisplay: plan.price,
+                    onSuccess: (paymentId) => {
+                      setActivePlanName(plan.name);
+                      setSuccessPaymentId(paymentId);
+                    },
+                    onError: (err) => {
+                      alert(`Payment notice: ${err}`);
+                    },
                   });
-                  setIsModalOpen(true);
                 }}
                 className={`w-full py-3 rounded-xl text-xs font-bold transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${plan.buttonStyle}`}
               >
@@ -314,12 +312,34 @@ export default function PricingPage() {
         <p>AuditPay • Protect Quick-Commerce Payouts & Recover Deduction Leakage for Indian Brands.</p>
       </footer>
 
-      {/* Cashfree Payment Modal */}
-      <PaymentModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        plan={selectedPlan}
-      />
+      {/* Payment Success Confirmation Popup */}
+      {successPaymentId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200 space-y-4">
+            <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+              <Check className="w-8 h-8 stroke-[2.5]" />
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900">Subscription Activated!</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                You are now subscribed to the <span className="font-bold text-slate-800">{activePlanName}</span> Plan.
+              </p>
+              <p className="text-[11px] font-mono text-slate-400 mt-1">
+                Payment ID: {successPaymentId}
+              </p>
+            </div>
+            <p className="text-xs text-emerald-700 bg-emerald-50 p-2.5 rounded-xl">
+              Audit quota is active for 30 days. GST invoice sent to your email.
+            </p>
+            <button
+              onClick={() => setSuccessPaymentId(null)}
+              className="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
+            >
+              Continue to Auditor
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
