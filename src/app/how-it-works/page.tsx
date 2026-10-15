@@ -436,7 +436,7 @@ export default function HowItWorksPage() {
                     <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/30 text-amber-400 flex items-center justify-center mx-auto shadow-sm">
                       <SearchCheck className="w-6 h-6 stroke-[2.2]" />
                     </div>
-                    <h3 className="text-lg font-bold text-white">Automated Deduction Radar In Action</h3>
+                    <h3 className="text-lg font-bold text-white">Automated Discrepancy Detection</h3>
                     <p className="text-xs text-slate-400 max-w-md mx-auto">
                       Click any flagged leakage category below to inspect matched discrepancy proof:
                     </p>
