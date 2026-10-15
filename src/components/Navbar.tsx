@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { ShieldAlert, UploadCloud, LayoutDashboard, Home as HomeIcon, Tag, HelpCircle } from 'lucide-react';
 import { useAudit } from '@/context/AuditContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface NavbarProps {
   onUploadClick?: () => void;
@@ -37,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
   const isHowItWorksActive = pathname === '/how-it-works';
 
   return (
-    <header className="border-b border-slate-200/80 bg-white/75 backdrop-blur-xl sticky top-0 z-50 shadow-xs">
+    <header className="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 shadow-xs transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Brand Logo & Name */}
@@ -51,11 +52,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-lg text-slate-900 tracking-tight">
-                Audit<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Pay</span>
+              <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
+                Audit<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-400">Pay</span>
               </span>
             </div>
-            <p className="text-xs text-slate-500 hidden sm:block">Protect Payouts • Recover Deduction Leakage</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Protect Payouts • Recover Deduction Leakage</p>
           </div>
         </Link>
 
@@ -66,21 +67,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
             onClick={handleHomeClick}
             className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
               isHomeActive
-                ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 font-bold border border-emerald-200/60 dark:border-emerald-800/60'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
             }`}
           >
             <HomeIcon className="w-3.5 h-3.5" />
             <span>Home</span>
           </button>
 
-          {/* Dashboard Link - ALWAYS visible at all times */}
+          {/* Dashboard Link */}
           <button
             onClick={handleDashboardClick}
             className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
               isDashboardActive
-                ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 font-bold border border-emerald-200/60 dark:border-emerald-800/60'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
             }`}
           >
             <LayoutDashboard className="w-3.5 h-3.5" />
@@ -92,8 +93,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
             href="/how-it-works"
             className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
               isHowItWorksActive
-                ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 font-bold border border-emerald-200/60 dark:border-emerald-800/60'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
             }`}
           >
             <HelpCircle className="w-3.5 h-3.5" />
@@ -105,13 +106,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
             href="/pricing"
             className={`inline-flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
               isPricingActive
-                ? 'text-emerald-700 bg-emerald-50 font-bold border border-emerald-200/60'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 font-bold border border-emerald-200/60 dark:border-emerald-800/60'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
             }`}
           >
             <Tag className="w-3.5 h-3.5" />
             <span>Pricing</span>
           </Link>
+
+          {/* Theme Toggle (Light / Dark mode switcher) */}
+          <div className="pl-1 border-l border-slate-200 dark:border-slate-800 ml-1">
+            <ThemeToggle />
+          </div>
 
           {/* Upload Another Statement Button (Shown when data is present) */}
           {hasData && onUploadClick && (

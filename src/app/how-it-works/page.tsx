@@ -212,7 +212,7 @@ export default function HowItWorksPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-subtle-canvas text-slate-800 flex flex-col selection:bg-emerald-500/10">
+    <div className="min-h-screen bg-subtle-canvas text-slate-800 dark:text-slate-100 flex flex-col selection:bg-emerald-500/10 transition-colors duration-200">
       
       {/* Universal Navigation */}
       <Navbar />
@@ -221,19 +221,19 @@ export default function HowItWorksPage() {
         
         {/* Header Hero Section */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Automated Quick-Commerce Auditing</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             How AuditPay Protects Your Margins & <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400">
               Recovers Disputed Deductions
             </span>
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
             D2C brands lose 3% to 8% of payout revenue to untracked dark-store debits. Here is how AuditPay automates 100% of the audit in under 60 seconds.
           </p>
         </div>
@@ -661,10 +661,10 @@ Attached is the itemized dispute dossier with proof of ₹1,84,320 in unreturned
         {/* 3 Step Visual Process Cards */}
         <div className="space-y-6">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Three Simple Steps to Recovery
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
               No technical setup, no developer integration required.
             </p>
           </div>
@@ -675,27 +675,27 @@ Attached is the itemized dispute dossier with proof of ₹1,84,320 in unreturned
               return (
                 <div
                   key={st.step}
-                  className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all flex flex-col justify-between"
+                  className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-lg dark:hover:border-slate-700 transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/80">
                         {st.tag}
                       </span>
-                      <span className="text-xl font-black text-slate-300 font-mono">{st.step}</span>
+                      <span className="text-xl font-black text-slate-300 dark:text-slate-700 font-mono">{st.step}</span>
                     </div>
 
-                    <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                       <IconComponent className="w-5 h-5 stroke-[2.3]" />
                     </div>
 
                     <div>
-                      <h3 className="font-extrabold text-slate-900 text-base mb-1.5">{st.title}</h3>
-                      <p className="text-xs text-slate-600 leading-relaxed">{st.shortDesc}</p>
+                      <h3 className="font-extrabold text-slate-900 dark:text-white text-base mb-1.5">{st.title}</h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{st.shortDesc}</p>
                     </div>
                   </div>
 
-                  <div className="mt-5 pt-4 border-t border-slate-100 text-[11px] text-slate-500 leading-relaxed font-medium">
+                  <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                     {st.detail}
                   </div>
                 </div>
@@ -705,15 +705,15 @@ Attached is the itemized dispute dossier with proof of ₹1,84,320 in unreturned
         </div>
 
         {/* The 3 Core Leakage Types Discovered */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/90 shadow-sm space-y-8">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-10 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-8">
           <div className="max-w-2xl">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800/80">
               Audit Capabilities
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-3">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-3">
               What Discrepancies Does AuditPay Catch?
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
               Dark store logistics are fast-paced, leading to frequent manual accounting mistakes.
             </p>
           </div>
@@ -724,25 +724,25 @@ Attached is the itemized dispute dossier with proof of ₹1,84,320 in unreturned
               return (
                 <div 
                   key={idx}
-                  className="rounded-2xl p-6 bg-slate-50 border border-slate-200/80 space-y-4 flex flex-col justify-between"
+                  className="rounded-2xl p-6 bg-slate-50 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 space-y-4 flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-700 flex items-center justify-center shadow-2xs">
-                        <LeakIcon className="w-5 h-5 text-emerald-600 stroke-[2.3]" />
+                      <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shadow-2xs">
+                        <LeakIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400 stroke-[2.3]" />
                       </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${leak.badgeColor}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${leak.badgeColor} dark:bg-opacity-20`}>
                         {leak.badge}
                       </span>
                     </div>
 
-                    <h3 className="font-bold text-slate-900 text-sm">{leak.title}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">{leak.desc}</p>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{leak.title}</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{leak.desc}</p>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-slate-200/80 text-[11px] text-emerald-900 space-y-1">
-                    <strong className="text-emerald-700 block font-semibold">How AuditPay Fixes It:</strong>
-                    <span className="leading-relaxed text-slate-600 block">{leak.solution}</span>
+                  <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 text-[11px] text-emerald-900 dark:text-emerald-200 space-y-1">
+                    <strong className="text-emerald-700 dark:text-emerald-400 block font-semibold">How AuditPay Fixes It:</strong>
+                    <span className="leading-relaxed text-slate-600 dark:text-slate-300 block">{leak.solution}</span>
                   </div>
                 </div>
               );
@@ -773,7 +773,7 @@ Attached is the itemized dispute dossier with proof of ₹1,84,320 in unreturned
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200/60 py-6 text-center text-xs text-slate-400 bg-white">
+      <footer className="border-t border-slate-200/60 dark:border-slate-800/80 py-6 text-center text-xs text-slate-400 dark:text-slate-500 bg-white/50 dark:bg-slate-950/50">
         <p>AuditPay • Protect Quick-Commerce Payouts & Recover Deduction Leakage for Indian Brands.</p>
       </footer>
 

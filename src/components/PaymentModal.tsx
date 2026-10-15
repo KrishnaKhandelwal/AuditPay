@@ -138,8 +138,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="px-6 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex items-center justify-between">
@@ -164,21 +164,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
         <div className="p-6">
           {successInfo ? (
             <div className="text-center py-4 space-y-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+              <div className="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8 stroke-[2.2]" />
               </div>
               <div>
-                <h4 className="text-lg font-extrabold text-slate-900">Payment Successful!</h4>
-                <p className="text-xs text-slate-500 mt-1">
-                  You are now subscribed to the <span className="font-bold text-slate-800">{successInfo.planName}</span> Plan.
+                <h4 className="text-lg font-extrabold text-slate-900 dark:text-white">Payment Successful!</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  You are now subscribed to the <span className="font-bold text-slate-800 dark:text-slate-200">{successInfo.planName}</span> Plan.
                 </p>
                 <p className="text-[11px] font-mono text-slate-400 mt-0.5">
                   Payment ID: {successInfo.paymentId}
                 </p>
               </div>
 
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center space-x-2">
-                <Zap className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 flex items-center space-x-2">
+                <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                 <span className="font-medium text-[11px]">Audit capacity active for 30 days. Corporate tax invoice sent to email.</span>
               </div>
 
@@ -195,20 +195,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
           ) : (
             <form onSubmit={handlePay} className="space-y-4">
               {/* Selected Plan Summary Banner */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Selected Tier</span>
-                  <h4 className="text-base font-extrabold text-slate-900">{plan.name} Plan</h4>
-                  <p className="text-xs text-slate-500">{plan.auditsLimit}</p>
+                  <h4 className="text-base font-extrabold text-slate-900 dark:text-white">{plan.name} Plan</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{plan.auditsLimit}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-slate-900 tracking-tight">₹{plan.price}</span>
+                  <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">₹{plan.price}</span>
                   <span className="text-[11px] text-slate-400 block font-medium">/ month</span>
                 </div>
               </div>
 
               {errorMsg && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-start space-x-2 text-xs text-rose-700">
+                <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl flex items-start space-x-2 text-xs text-rose-700 dark:text-rose-300">
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>{errorMsg}</span>
                 </div>
@@ -217,33 +217,33 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
               {/* Billing Info Inputs */}
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Brand / Contact Name</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Brand / Contact Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Ramesh Kumar (Acme Foods)"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder-slate-400 dark:placeholder-slate-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Work Email (for Invoices & Quota)</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Work Email (for Invoices & Quota)</label>
                   <input
                     type="email"
                     required
                     placeholder="finance@brand.com"
                     value={customerEmail}
                     onChange={(e) => setCustomerEmail(e.target.value)}
-                    className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder-slate-400 dark:placeholder-slate-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Mobile Number</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Mobile Number</label>
                   <div className="flex">
-                    <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-200 bg-slate-50 text-slate-500 text-xs font-medium">
+                    <span className="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs font-medium">
                       +91
                     </span>
                     <input
@@ -254,16 +254,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, pla
                       placeholder="9876543210"
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value.replace(/[^0-9]/g, ''))}
-                      className="w-full text-xs px-3.5 py-2.5 rounded-r-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-r-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder-slate-400 dark:placeholder-slate-500"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Payment Methods Info */}
-              <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-100">
+              <div className="pt-2 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
                 <span>Supports Cards, NetBanking, UPI & EMI</span>
-                <span className="font-semibold text-emerald-700">100% Secure</span>
+                <span className="font-semibold text-emerald-700 dark:text-emerald-400">100% Secure</span>
               </div>
 
               {/* Submit Button */}

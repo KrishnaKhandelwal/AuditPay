@@ -84,7 +84,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-subtle-canvas text-slate-800 flex flex-col selection:bg-emerald-500/10">
+    <div className="min-h-screen bg-subtle-canvas text-slate-800 dark:text-slate-100 flex flex-col selection:bg-emerald-500/10 transition-colors duration-200">
       
       {/* Hidden file input for single-click upload directly from the dashboard */}
       <input 
@@ -115,34 +115,34 @@ export default function Home() {
             <FileUploadSection onAuditReady={handleAuditReady} />
 
             {/* Feature Highlights */}
-            <div className="mt-14 pt-10 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+            <div className="mt-14 pt-10 border-t border-slate-200/60 dark:border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
               
-              <div className="p-6 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A]/80 shadow-[0_4px_14px_rgba(245,158,11,0.06)] hover:shadow-[0_6px_18px_rgba(245,158,11,0.12)] transition-all">
+              <div className="p-6 rounded-2xl bg-[#FFFBEB] dark:bg-amber-950/25 border border-[#FDE68A]/80 dark:border-amber-900/40 shadow-[0_4px_14px_rgba(245,158,11,0.06)] hover:shadow-[0_6px_18px_rgba(245,158,11,0.12)] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-[#F59E0B] text-white flex items-center justify-center mb-4 shadow-[0_2px_8px_rgba(245,158,11,0.3)]">
                   <ShieldCheck className="w-5 h-5 stroke-[2.4]" />
                 </div>
-                <h3 className="font-bold text-[#78350F] text-base mb-1">Detect Phantom Deductions</h3>
-                <p className="text-xs text-[#92400E] leading-relaxed">
+                <h3 className="font-bold text-[#78350F] dark:text-amber-200 text-base mb-1">Detect Phantom Deductions</h3>
+                <p className="text-xs text-[#92400E] dark:text-amber-300/80 leading-relaxed">
                   Scans for untracked RTV returns, unverified damages, and arbitrary shelf-life expiry debits.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[#FFF1F2] border border-[#FECDD3]/80 shadow-[0_4px_14px_rgba(244,63,94,0.06)] hover:shadow-[0_6px_18px_rgba(244,63,94,0.12)] transition-all">
+              <div className="p-6 rounded-2xl bg-[#FFF1F2] dark:bg-rose-950/25 border border-[#FECDD3]/80 dark:border-rose-900/40 shadow-[0_4px_14px_rgba(244,63,94,0.06)] hover:shadow-[0_6px_18px_rgba(244,63,94,0.12)] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-[#F43F5E] text-white flex items-center justify-center mb-4 shadow-[0_2px_8px_rgba(244,63,94,0.3)]">
                   <Zap className="w-5 h-5 stroke-[2.4]" />
                 </div>
-                <h3 className="font-bold text-[#881337] text-base mb-1">Catch Duplicate Debit Notes</h3>
-                <p className="text-xs text-[#9F1239] leading-relaxed">
+                <h3 className="font-bold text-[#881337] dark:text-rose-200 text-base mb-1">Catch Duplicate Debit Notes</h3>
+                <p className="text-xs text-[#9F1239] dark:text-rose-300/80 leading-relaxed">
                   Identifies identical debit note numbers and reference IDs charged multiple times across payout cycles.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0]/80 shadow-[0_4px_14px_rgba(16,185,129,0.06)] hover:shadow-[0_6px_18px_rgba(16,185,129,0.12)] transition-all">
+              <div className="p-6 rounded-2xl bg-[#ECFDF5] dark:bg-emerald-950/25 border border-[#A7F3D0]/80 dark:border-emerald-900/40 shadow-[0_4px_14px_rgba(16,185,129,0.06)] hover:shadow-[0_6px_18px_rgba(16,185,129,0.12)] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-[#10B981] text-white flex items-center justify-center mb-4 shadow-[0_2px_8px_rgba(16,185,129,0.3)]">
                   <CheckCircle2 className="w-5 h-5 stroke-[2.4]" />
                 </div>
-                <h3 className="font-bold text-[#064E3B] text-base mb-1">Instant Dispute Package</h3>
-                <p className="text-xs text-[#065F46] leading-relaxed">
+                <h3 className="font-bold text-[#064E3B] dark:text-emerald-200 text-base mb-1">Instant Dispute Package</h3>
+                <p className="text-xs text-[#065F46] dark:text-emerald-300/80 leading-relaxed">
                   Automatically generates dispute claim Excel workbooks and vendor support emails tailored for SLA rules.
                 </p>
               </div>
@@ -167,7 +167,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200/60 py-6 text-center text-xs text-slate-400">
+      <footer className="border-t border-slate-200/60 dark:border-slate-800/80 py-6 text-center text-xs text-slate-400 dark:text-slate-500 bg-white/50 dark:bg-slate-950/50">
         <p>AuditPay • Protect Quick-Commerce Payouts & Recover Deduction Leakage for Indian Brands.</p>
       </footer>
 
