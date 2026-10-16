@@ -50,6 +50,12 @@ export default function Home() {
     platform: PlatformType,
     fileName: string
   ) => {
+    // Require sign in before auditing data
+    if (!isAuthenticated) {
+      openAuthModal('Please sign in or create a free merchant account to audit your settlement statement.');
+      return;
+    }
+
     // Check user audit quota before running
     if (!canPerformAudit()) {
       openPaywallModal('Monthly Audit Quota Limit Reached');
@@ -170,31 +176,44 @@ export default function Home() {
           /* State 3: Dashboard */
           <div className="space-y-6">
             
-            {/* Account Save Prompt for Guest Users with Active Audit */}
-            {hasData && !isAuthenticated && (
-              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                <div className="flex items-center space-x-2 text-emerald-900 dark:text-emerald-200">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
-                  <span>
-                    <strong>Running in guest preview session.</strong> Create a merchant account to permanently save this audit and your recovered deduction dossiers.
-                  </span>
+            {/* When not signed in: show clear callout explaining empty state */}
+            {!isAuthenticated ? (
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center shadow-xs">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3 shadow-xs">
+                  <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
                 </div>
+                <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1">
+                  Sign In to Access Dashboard Data
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4">
+                  The dashboard is currently empty. Sign in or create a merchant account to upload settlement files and populate your recovery widgets.
+                </p>
                 <button
-                  onClick={() => openAuthModal('Create a merchant account to save your audit results and dispute files')}
-                  className="px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 shadow-xs cursor-pointer flex items-center space-x-1.5"
+                  onClick={() => openAuthModal('Sign in or create an account to view and populate your audit dashboard')}
+                  className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02] cursor-pointer"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
-                  <span>Create Account to Save</span>
+                  <span>Sign In / Create Account</span>
                 </button>
               </div>
-            )}
+            ) : !hasData ? (
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                <span>No settlement file uploaded yet. Drop a CSV or Excel statement to view live reconciliation metrics.</span>
+                <button
+                  onClick={() => directFileInputRef.current?.click()}
+                  className="px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
+                >
+                  Upload Statement
+                </button>
+              </div>
+            ) : null}
 
-            {/* KPI Cards */}
-            <SummaryCards summary={summary} />
+            {/* KPI Cards: strictly null if unauthenticated */}
+            <SummaryCards summary={isAuthenticated ? summary : null} />
 
-            {/* Discrepancy Table */}
+            {/* Discrepancy Table: strictly empty array if unauthenticated */}
             <DiscrepancyTable 
-              discrepancies={discrepancies} 
+              discrepancies={isAuthenticated ? discrepancies : []} 
               detectedPlatform={detectedPlatform} 
             />
 

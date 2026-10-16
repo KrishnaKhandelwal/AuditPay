@@ -10,6 +10,7 @@ interface SummaryCardsProps {
 
 export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
   const hasValidData = Boolean(summary && summary.totalRowsProcessed > 0);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       
@@ -19,7 +20,6 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9F1239] dark:text-rose-300">
             Total Disputed Leakage
           </span>
-          {/* Icon Container: Filled with card theme color, icon is white */}
           <div className="w-8 h-8 rounded-xl bg-[#F43F5E] text-white flex items-center justify-center shadow-[0_2px_6px_rgba(244,63,94,0.3)]">
             <AlertCircle className="w-4 h-4 stroke-[2.4]" />
           </div>
@@ -28,7 +28,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-xl font-bold text-[#E11D48] dark:text-rose-400">₹</span>
           <span className="text-3xl font-extrabold text-[#881337] dark:text-rose-100 tracking-tight">
-            {hasValidData && summary ? summary.totalLeakageIdentified.toLocaleString('en-IN') : '0'}
+            {hasValidData && summary ? summary.totalLeakageIdentified.toLocaleString('en-IN') : '--'}
           </span>
         </div>
 
@@ -46,7 +46,6 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#854D0E] dark:text-amber-300">
             Phantom / Ghost RTVs
           </span>
-          {/* Icon Container: Filled with card theme color, icon is white */}
           <div className="w-8 h-8 rounded-xl bg-[#EAB308] text-white flex items-center justify-center shadow-[0_2px_6px_rgba(234,179,8,0.3)]">
             <Ghost className="w-4 h-4 stroke-[2.4]" />
           </div>
@@ -55,12 +54,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#CA8A04] dark:text-amber-400">₹</span>
           <span className="text-3xl font-extrabold text-[#713F12] dark:text-amber-100 tracking-tight">
-            {hasValidData && summary ? summary.ghostReturnsAmount.toLocaleString('en-IN') : '0'}
+            {hasValidData && summary ? summary.ghostReturnsAmount.toLocaleString('en-IN') : '--'}
           </span>
         </div>
 
         <p className="mt-3.5 pt-2.5 border-t border-[#FEF08A]/70 dark:border-amber-900/50 text-xs text-[#854D0E]/90 dark:text-amber-300/80 leading-relaxed font-medium">
-          {hasValidData ? 'Deducted by platform, but 0 physical units received at warehouse.' : 'No data (upload CSV to analyze)'}
+          {hasValidData ? 'Deducted by platform, but 0 physical units received at warehouse.' : 'No data (sign in to analyze)'}
         </p>
       </div>
 
@@ -70,7 +69,6 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0369A1] dark:text-sky-300">
             Short Inward Receipts
           </span>
-          {/* Icon Container: Filled with card theme color, icon is white */}
           <div className="w-8 h-8 rounded-xl bg-[#0EA5E9] text-white flex items-center justify-center shadow-[0_2px_6px_rgba(14,165,233,0.3)]">
             <TrendingDown className="w-4 h-4 stroke-[2.4]" />
           </div>
@@ -79,12 +77,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#0284C7] dark:text-sky-400">₹</span>
           <span className="text-3xl font-extrabold text-[#0C4A6E] dark:text-sky-100 tracking-tight">
-            {hasValidData && summary ? summary.shortReceiptsAmount.toLocaleString('en-IN') : '0'}
+            {hasValidData && summary ? summary.shortReceiptsAmount.toLocaleString('en-IN') : '--'}
           </span>
         </div>
 
         <p className="mt-3.5 pt-2.5 border-t border-[#BAE6FD]/70 dark:border-sky-900/50 text-xs text-[#0369A1]/90 dark:text-sky-300/80 leading-relaxed font-medium">
-          {hasValidData ? 'Physical inward count was lower than platform deduction claim.' : 'No data (upload CSV to analyze)'}
+          {hasValidData ? 'Physical inward count was lower than platform deduction claim.' : 'No data (sign in to analyze)'}
         </p>
       </div>
 
@@ -94,7 +92,6 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6B21A8] dark:text-purple-300">
             Duplicates & Offsets
           </span>
-          {/* Icon Container: Filled with card theme color, icon is white */}
           <div className="w-8 h-8 rounded-xl bg-[#A855F7] text-white flex items-center justify-center shadow-[0_2px_6px_rgba(168,85,247,0.3)]">
             <Repeat className="w-4 h-4 stroke-[2.4]" />
           </div>
@@ -103,12 +100,12 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#9333EA] dark:text-purple-400">₹</span>
           <span className="text-3xl font-extrabold text-[#581C87] dark:text-purple-100 tracking-tight">
-            {hasValidData && summary ? (summary.duplicateDeductionsAmount + summary.rateOverchargesAmount).toLocaleString('en-IN') : '0'}
+            {hasValidData && summary ? (summary.duplicateDeductionsAmount + summary.rateOverchargesAmount).toLocaleString('en-IN') : '--'}
           </span>
         </div>
 
         <p className="mt-3.5 pt-2.5 border-t border-[#E9D5FF]/70 dark:border-purple-900/50 text-xs text-[#6B21A8]/90 dark:text-purple-300/80 leading-relaxed font-medium">
-          {hasValidData ? 'Repeated debit notes or unapproved co-op ad-spend chargebacks.' : 'No data (upload CSV to analyze)'}
+          {hasValidData ? 'Repeated debit notes or unapproved co-op ad-spend chargebacks.' : 'No data (sign in to analyze)'}
         </p>
       </div>
 

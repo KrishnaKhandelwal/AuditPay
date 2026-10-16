@@ -56,6 +56,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
     canGenerateDisputeEmail, 
     canViewAllDiscrepancies, 
     openPaywallModal,
+    isAuthenticated,
     user 
   } = useAuth();
 
@@ -195,10 +196,10 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
             <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center space-x-2">
               <span>Deduction Leakage Breakdown</span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 text-[#065F46] dark:text-emerald-300 border border-[#A7F3D0] dark:border-emerald-800/60">
-                {filtered.length} Disputed Items
+                {filtered.length > 0 ? `${filtered.length} Disputed Items` : 'No data'}
               </span>
             </h2>
-            {isFreePlan && (
+            {isFreePlan && filtered.length > 0 && (
               <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
                 Free Preview (Top 3)
               </span>
@@ -307,8 +308,15 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {paginatedItems.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-slate-400 dark:text-slate-500">
-                  No matching discrepancies found {selectedCity !== 'ALL' ? `for ${selectedCity}` : ''}.
+                <td colSpan={6} className="py-12 text-center text-slate-400 dark:text-slate-500">
+                  <div className="flex flex-col items-center justify-center space-y-1">
+                    <span className="font-bold text-sm text-slate-700 dark:text-slate-300">No data available</span>
+                    <span className="text-xs text-slate-400 max-w-sm">
+                      {!isAuthenticated 
+                        ? 'Sign in to your merchant account to upload settlement statements and view audited discrepancy records.' 
+                        : 'Upload a settlement statement to run deduction reconciliation.'}
+                    </span>
+                  </div>
                 </td>
               </tr>
             ) : (
