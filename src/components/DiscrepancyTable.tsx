@@ -190,31 +190,31 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden transition-colors duration-200">
       
       {/* Table Header Bar */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center space-x-2">
               <span>Deduction Leakage Breakdown</span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 text-[#065F46] dark:text-emerald-300 border border-[#A7F3D0] dark:border-emerald-800/60">
-                {filtered.length > 0 ? `${filtered.length} Disputed Items` : 'No data'}
-              </span>
             </h2>
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 text-[#065F46] dark:text-emerald-300 border border-[#A7F3D0] dark:border-emerald-800/60">
+              {filtered.length > 0 ? `${filtered.length} Disputed Items` : 'No data'}
+            </span>
             {isFreePlan && filtered.length > 0 && (
               <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
                 Free Preview (Top 3)
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-400 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-400 dark:text-slate-400 mt-1">
             Verified discrepancies ready for immediate dispute submission.
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
           <button
             onClick={handleGenerateEmailClick}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer relative"
+            className="w-full sm:w-auto justify-center inline-flex items-center space-x-1.5 px-3.5 py-2.5 sm:py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer relative"
           >
             {isFreePlan && <Lock className="w-3 h-3 text-amber-500" />}
             <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
@@ -223,7 +223,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
 
           <button
             onClick={handleExportClick}
-            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[#059669] hover:bg-[#047857] text-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:scale-[1.01] cursor-pointer relative"
+            className="w-full sm:w-auto justify-center inline-flex items-center space-x-1.5 px-4 py-2.5 sm:py-2 rounded-xl text-xs font-semibold bg-[#059669] hover:bg-[#047857] text-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:scale-[1.01] cursor-pointer relative"
           >
             {isFreePlan && <Lock className="w-3 h-3 text-amber-200" />}
             <Download className="w-3.5 h-3.5" />
@@ -233,8 +233,8 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="px-5 sm:px-6 py-3 bg-[#F8FAFC] dark:bg-slate-950/60 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="px-4 sm:px-6 py-3 bg-[#F8FAFC] dark:bg-slate-950/60 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="relative w-full md:max-w-xs">
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
@@ -244,20 +244,20 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 shadow-2xs"
+            className="w-full pl-8 pr-3 py-2 sm:py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 shadow-2xs"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 text-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs w-full md:w-auto">
           {/* Categories Dropdown */}
-          <div className="flex items-center space-x-1.5">
+          <div className="flex items-center space-x-1.5 w-full sm:w-auto">
             <select
               value={selectedType}
               onChange={(e) => {
                 setSelectedType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-hidden focus:border-emerald-500 shadow-2xs font-medium cursor-pointer"
+              className="w-full sm:w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs rounded-lg px-2.5 py-2 sm:py-1.5 focus:outline-hidden focus:border-emerald-500 shadow-2xs font-medium cursor-pointer"
             >
               <option value="ALL">All Categories</option>
               <option value="GHOST_RETURN">Phantom / Ghost RTV</option>
@@ -269,16 +269,16 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
 
           {/* Filter by City */}
           {hasMultipleCities && (
-            <div className="flex items-center space-x-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 shadow-2xs">
-              <Filter className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-slate-500 dark:text-slate-400 font-medium">City:</span>
+            <div className="flex items-center space-x-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 sm:py-1.5 shadow-2xs w-full sm:w-auto">
+              <Filter className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span className="text-slate-500 dark:text-slate-400 font-medium shrink-0">City:</span>
               <select
                 value={selectedCity}
                 onChange={(e) => {
                   setSelectedCity(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="bg-transparent border-0 text-slate-700 dark:text-slate-200 text-xs focus:outline-hidden font-medium cursor-pointer pr-1"
+                className="w-full bg-transparent border-0 text-slate-700 dark:text-slate-200 text-xs focus:outline-hidden font-medium cursor-pointer pr-1"
               >
                 <option value="ALL">All Cities ({uniqueCities.length})</option>
                 {uniqueCities.map((city) => (
@@ -292,9 +292,15 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
         </div>
       </div>
 
+      {/* Mobile Swipe Table Helper */}
+      <div className="md:hidden px-4 py-1.5 bg-emerald-50/50 dark:bg-emerald-950/30 text-[10px] text-emerald-700 dark:text-emerald-300 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+        <span>Swipe table horizontally to see all columns</span>
+        <span className="font-mono font-bold">⇄</span>
+      </div>
+
       {/* Table Data */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+        <table className="w-full min-w-[720px] text-left text-xs text-slate-600 dark:text-slate-300">
           <thead className="bg-[#F8FAFC] dark:bg-slate-950/60 text-slate-400 dark:text-slate-400 uppercase font-semibold text-[11px] border-b border-slate-100 dark:border-slate-800">
             <tr>
               <th className="py-3 px-5">Platform & DN</th>
@@ -403,21 +409,21 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
 
       {/* Paywall Callout Banner when items are locked */}
       {isFreePlan && lockedCount > 0 && (
-        <div className="p-6 bg-gradient-to-r from-emerald-50/70 via-teal-50/70 to-emerald-50/70 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border-t border-emerald-200/80 dark:border-emerald-800/60 text-center flex flex-col items-center justify-center">
+        <div className="p-4 sm:p-6 bg-gradient-to-r from-emerald-50/70 via-teal-50/70 to-emerald-50/70 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border-t border-emerald-200/80 dark:border-emerald-800/60 text-center flex flex-col items-center justify-center">
           <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 mb-3 shadow-sm">
             <Lock className="w-5 h-5 stroke-[2.5]" />
           </div>
 
-          <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1">
+          <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white mb-1">
             🔒 {lockedCount} More Disputed Items Hidden (Valued at ₹{lockedAmount.toLocaleString('en-IN')})
           </h3>
-          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mb-4">
+          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mb-4 px-2 leading-relaxed">
             Free tier displays the top 3 high-impact discrepancies. Upgrade to Starter or Growth to unlock full SKU lines, dark-store city breakdown, and 1-click Excel claim packages.
           </p>
 
           <button
             onClick={() => openPaywallModal('Complete Line-Item Ledger')}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 transition-all hover:scale-[1.02] cursor-pointer"
+            className="w-full sm:w-auto justify-center inline-flex items-center space-x-2 px-5 py-3 sm:py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 transition-all hover:scale-[1.02] cursor-pointer"
           >
             <span>Unlock All {filtered.length} Discrepancies Now</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -427,14 +433,14 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
 
       {/* Pagination Footer (For Subscribed Users) */}
       {!isFreePlan && filtered.length > 0 && (
-        <div className="px-5 sm:px-6 py-3 bg-[#F8FAFC] dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
-          <div>
+        <div className="px-4 sm:px-6 py-3.5 bg-[#F8FAFC] dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-center sm:text-left">
             Showing <span className="text-slate-800 dark:text-slate-200 font-medium">{startIndex + 1}</span> to{' '}
             <span className="text-slate-800 dark:text-slate-200 font-medium">{endIndex}</span> of{' '}
             <span className="text-slate-800 dark:text-slate-200 font-medium">{filtered.length}</span> disputed items
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap justify-center">
             <button
               onClick={() => handlePageChange(safeCurrentPage - 1)}
               disabled={safeCurrentPage <= 1}
@@ -445,7 +451,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
               }`}
             >
               <ChevronLeft className="w-3.5 h-3.5" />
-              <span>Previous</span>
+              <span>Prev</span>
             </button>
 
             {/* Page number indicators */}
@@ -497,58 +503,58 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
 
       {/* Support Dispute Letter Modal */}
       {showLetterModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col">
             
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 dark:text-white flex items-center space-x-2">
-                  <Send className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span>Platform Vendor Support Dispute Dossier</span>
+            <div className="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-3 sm:mb-4">
+              <div className="pr-4">
+                <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-white flex items-center space-x-2">
+                  <Send className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span className="truncate">Vendor Support Dispute Dossier</span>
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5 leading-snug">
                   Pre-formatted official claim letter compliant with quick-commerce vendor SLA guidelines.
                 </p>
               </div>
               <button
                 onClick={() => setShowLetterModal(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-sm p-1 cursor-pointer"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-base p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer shrink-0"
               >
                 ✕
               </button>
             </div>
 
-            <div className="mb-3 flex items-center space-x-2">
+            <div className="mb-3 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:space-x-2">
               <label className="text-xs text-slate-600 dark:text-slate-300 font-medium">Your Brand Name:</label>
               <input
                 type="text"
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
-                className="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden focus:border-emerald-500 shadow-2xs"
+                className="w-full sm:w-auto px-2.5 py-1.5 sm:py-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden focus:border-emerald-500 shadow-2xs"
               />
             </div>
 
-            <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 font-mono text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+            <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950 p-3 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 font-mono text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
               {generateDisputeClaimLetter(detectedPlatform, filtered, brandName)}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-[11px] text-slate-400">
+            <div className="mt-3 sm:mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-[10px] sm:text-[11px] text-slate-400 text-center sm:text-left">
                 Attach the generated Excel dispute ledger along with this draft to partner support.
               </span>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
                 <button
                   onClick={() => setShowLetterModal(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer"
+                  className="flex-1 sm:flex-initial px-3 py-2 sm:py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer text-center"
                 >
                   Close
                 </button>
                 <button
                   onClick={handleCopyLetter}
-                  className="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-all cursor-pointer"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-4 py-2 sm:py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-all cursor-pointer"
                 >
                   {copiedLetter ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedLetter ? 'Copied to Clipboard!' : 'Copy Letter Draft'}</span>
+                  <span>{copiedLetter ? 'Copied!' : 'Copy Letter Draft'}</span>
                 </button>
               </div>
             </div>

@@ -124,7 +124,7 @@ export default function Home() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-10">
         
         {/* State 1: 10-Second "Fetching Data" Screen */}
         {isFetching ? (
@@ -138,9 +138,9 @@ export default function Home() {
             <FileUploadSection onAuditReady={handleAuditReady} />
 
             {/* Feature Highlights */}
-            <div className="mt-14 pt-10 border-t border-slate-200/60 dark:border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+            <div className="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-slate-200/60 dark:border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 max-w-5xl mx-auto">
               
-              <div className="p-6 rounded-2xl bg-[#FFFBEB] dark:bg-amber-950/25 border border-[#FDE68A]/80 dark:border-amber-900/40 shadow-[0_4px_14px_rgba(245,158,11,0.06)] hover:shadow-[0_6px_18px_rgba(245,158,11,0.12)] transition-all">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#FFFBEB] dark:bg-amber-950/25 border border-[#FDE68A]/80 dark:border-amber-900/40 shadow-[0_4px_14px_rgba(245,158,11,0.06)] hover:shadow-[0_6px_18px_rgba(245,158,11,0.12)] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-[#F59E0B] text-white flex items-center justify-center mb-4 shadow-[0_2px_8px_rgba(245,158,11,0.3)]">
                   <ShieldCheck className="w-5 h-5 stroke-[2.4]" />
                 </div>
@@ -150,7 +150,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[#FFF1F2] dark:bg-rose-950/25 border border-[#FECDD3]/80 dark:border-rose-900/40 shadow-[0_4px_14px_rgba(244,63,94,0.06)] hover:shadow-[0_6px_18px_rgba(244,63,94,0.12)] transition-all">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#FFF1F2] dark:bg-rose-950/25 border border-[#FECDD3]/80 dark:border-rose-900/40 shadow-[0_4px_14px_rgba(244,63,94,0.06)] hover:shadow-[0_6px_18px_rgba(244,63,94,0.12)] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-[#F43F5E] text-white flex items-center justify-center mb-4 shadow-[0_2px_8px_rgba(244,63,94,0.3)]">
                   <Zap className="w-5 h-5 stroke-[2.4]" />
                 </div>
@@ -160,7 +160,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[#ECFDF5] dark:bg-emerald-950/25 border border-[#A7F3D0]/80 dark:border-emerald-900/40 shadow-[0_4px_14px_rgba(16,185,129,0.06)] hover:shadow-[0_6px_18px_rgba(16,185,129,0.12)] transition-all">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#ECFDF5] dark:bg-emerald-950/25 border border-[#A7F3D0]/80 dark:border-emerald-900/40 shadow-[0_4px_14px_rgba(16,185,129,0.06)] hover:shadow-[0_6px_18px_rgba(16,185,129,0.12)] transition-all">
                 <div className="w-10 h-10 rounded-xl bg-[#10B981] text-white flex items-center justify-center mb-4 shadow-[0_2px_8px_rgba(16,185,129,0.3)]">
                   <CheckCircle2 className="w-5 h-5 stroke-[2.4]" />
                 </div>
@@ -178,30 +178,30 @@ export default function Home() {
             
             {/* When not signed in: show clear callout explaining empty state */}
             {!isAuthenticated ? (
-              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center shadow-xs">
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center shadow-xs">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3 shadow-xs">
                   <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
                 </div>
                 <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1">
                   Sign In to Access Dashboard Data
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4">
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4 px-2">
                   The dashboard is currently empty. Sign in or create a merchant account to upload settlement files and populate your recovery widgets.
                 </p>
                 <button
                   onClick={() => openAuthModal('Sign in or create an account to view and populate your audit dashboard')}
-                  className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3 sm:py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02] cursor-pointer"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>Sign In / Create Account</span>
                 </button>
               </div>
             ) : !hasData ? (
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500">
                 <span>No settlement file uploaded yet. Drop a CSV or Excel statement to view live reconciliation metrics.</span>
                 <button
                   onClick={() => directFileInputRef.current?.click()}
-                  className="px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer text-center shrink-0"
                 >
                   Upload Statement
                 </button>

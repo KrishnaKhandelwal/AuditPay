@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuditProvider } from "@/context/AuditContext";
@@ -20,6 +20,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AuditPay • Protect Payouts & Recover Deduction Leakage",
   description: "Automated quick-commerce settlement and warehouse inward auditor for Indian D2C brands. Detect phantom RTV returns and recover lost margins from Blinkit, Zepto, and Instamart.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

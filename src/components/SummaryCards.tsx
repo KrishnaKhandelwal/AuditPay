@@ -15,7 +15,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       
       {/* 1. Pastel Rose Card - Total Leakage */}
-      <div className="rounded-2xl p-5 bg-[#FFF1F2] dark:bg-rose-950/25 border border-[#FFE4E6] dark:border-rose-900/40 shadow-[0_4px_12px_rgba(244,63,94,0.06)] hover:shadow-[0_6px_16px_rgba(244,63,94,0.1)] transition-all">
+      <div className="rounded-2xl p-4 sm:p-5 bg-[#FFF1F2] dark:bg-rose-950/25 border border-[#FFE4E6] dark:border-rose-900/40 shadow-[0_4px_12px_rgba(244,63,94,0.06)] hover:shadow-[0_6px_16px_rgba(244,63,94,0.1)] transition-all">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#9F1239] dark:text-rose-300">
             Total Disputed Leakage
@@ -27,7 +27,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
 
         <div className="flex items-baseline space-x-1">
           <span className="text-xl font-bold text-[#E11D48] dark:text-rose-400">₹</span>
-          <span className="text-3xl font-extrabold text-[#881337] dark:text-rose-100 tracking-tight">
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#881337] dark:text-rose-100 tracking-tight">
             {hasValidData && summary ? summary.totalLeakageIdentified.toLocaleString('en-IN') : '--'}
           </span>
         </div>
@@ -41,7 +41,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* 2. Pastel Amber / Honey Card - Phantom RTVs */}
-      <div className="rounded-2xl p-5 bg-[#FEFCE8] dark:bg-amber-950/25 border border-[#FEF08A]/70 dark:border-amber-900/40 shadow-[0_4px_12px_rgba(234,179,8,0.06)] hover:shadow-[0_6px_16px_rgba(234,179,8,0.1)] transition-all">
+      <div className="rounded-2xl p-4 sm:p-5 bg-[#FEFCE8] dark:bg-amber-950/25 border border-[#FEF08A]/70 dark:border-amber-900/40 shadow-[0_4px_12px_rgba(234,179,8,0.06)] hover:shadow-[0_6px_16px_rgba(234,179,8,0.1)] transition-all">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#854D0E] dark:text-amber-300">
             Phantom / Ghost RTVs
@@ -53,7 +53,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
 
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#CA8A04] dark:text-amber-400">₹</span>
-          <span className="text-3xl font-extrabold text-[#713F12] dark:text-amber-100 tracking-tight">
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#713F12] dark:text-amber-100 tracking-tight">
             {hasValidData && summary ? summary.ghostReturnsAmount.toLocaleString('en-IN') : '--'}
           </span>
         </div>
@@ -64,7 +64,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* 3. Pastel Sky Blue Card - Short Receipts */}
-      <div className="rounded-2xl p-5 bg-[#F0F9FF] dark:bg-sky-950/25 border border-[#BAE6FD]/70 dark:border-sky-900/40 shadow-[0_4px_12px_rgba(14,165,233,0.06)] hover:shadow-[0_6px_16px_rgba(14,165,233,0.1)] transition-all">
+      <div className="rounded-2xl p-4 sm:p-5 bg-[#F0F9FF] dark:bg-sky-950/25 border border-[#BAE6FD]/70 dark:border-sky-900/40 shadow-[0_4px_12px_rgba(14,165,233,0.06)] hover:shadow-[0_6px_16px_rgba(14,165,233,0.1)] transition-all">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0369A1] dark:text-sky-300">
             Short Inward Receipts
@@ -76,7 +76,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
 
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#0284C7] dark:text-sky-400">₹</span>
-          <span className="text-3xl font-extrabold text-[#0C4A6E] dark:text-sky-100 tracking-tight">
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#0C4A6E] dark:text-sky-100 tracking-tight">
             {hasValidData && summary ? summary.shortReceiptsAmount.toLocaleString('en-IN') : '--'}
           </span>
         </div>
@@ -87,7 +87,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
       </div>
 
       {/* 4. Pastel Lavender Card - Duplicates & Offsets */}
-      <div className="rounded-2xl p-5 bg-[#FAF5FF] dark:bg-purple-950/25 border border-[#E9D5FF]/70 dark:border-purple-900/40 shadow-[0_4px_12px_rgba(168,85,247,0.06)] hover:shadow-[0_6px_16px_rgba(168,85,247,0.1)] transition-all">
+      <div className="rounded-2xl p-4 sm:p-5 bg-[#FAF5FF] dark:bg-purple-950/25 border border-[#E9D5FF]/70 dark:border-purple-900/40 shadow-[0_4px_12px_rgba(168,85,247,0.06)] hover:shadow-[0_6px_16px_rgba(168,85,247,0.1)] transition-all">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6B21A8] dark:text-purple-300">
             Duplicates & Offsets
@@ -99,7 +99,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
 
         <div className="flex items-baseline space-x-1">
           <span className="text-lg font-bold text-[#9333EA] dark:text-purple-400">₹</span>
-          <span className="text-3xl font-extrabold text-[#581C87] dark:text-purple-100 tracking-tight">
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#581C87] dark:text-purple-100 tracking-tight">
             {hasValidData && summary ? (summary.duplicateDeductionsAmount + summary.rateOverchargesAmount).toLocaleString('en-IN') : '--'}
           </span>
         </div>

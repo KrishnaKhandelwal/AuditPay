@@ -92,23 +92,23 @@ export default function PricingPage() {
       <Navbar />
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-8 sm:py-16">
         
         {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 border border-[#A7F3D0] dark:border-emerald-800/60 text-[#065F46] dark:text-emerald-300 text-xs font-semibold mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 border border-[#A7F3D0] dark:border-emerald-800/60 text-[#065F46] dark:text-emerald-300 text-[11px] sm:text-xs font-semibold mb-3 sm:mb-4">
             <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Transparent, High-ROI Plans</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             Stop Margin Erosion. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400">
               Recover Lost Cash in Week 1.
             </span>
           </h1>
 
-          <p className="mt-4 text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed px-2">
             Choose a plan tailored to your sales volume. Recover thousands in disputed deductions with ready-to-submit claim dossiers.
           </p>
 
@@ -124,14 +124,14 @@ export default function PricingPage() {
         </div>
 
         {/* 3-Tier Pricing Cards Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16 items-stretch">
           {plans.map((plan) => {
             const isCurrentPlan = Boolean(isAuthenticated && isPaidUser && user?.plan === plan.planKey && user?.plan !== 'free');
 
             return (
               <div
                 key={plan.name}
-                className={`rounded-3xl p-7 flex flex-col justify-between transition-all relative ${
+                className={`rounded-3xl p-5 sm:p-7 flex flex-col justify-between transition-all relative ${
                   plan.popular
                     ? 'bg-white dark:bg-slate-900 border-2 border-emerald-500 dark:border-emerald-500 shadow-xl shadow-emerald-500/10 lg:-translate-y-2'
                     : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-lg dark:hover:border-slate-700'
