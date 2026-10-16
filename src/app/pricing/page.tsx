@@ -11,7 +11,7 @@ import { useAuth, PlanType } from '@/context/AuthContext';
 export default function PricingPage() {
   const [successPaymentId, setSuccessPaymentId] = useState<string | null>(null);
   const [activePlanName, setActivePlanName] = useState<string | null>(null);
-  const { user, upgradePlan } = useAuth();
+  const { user, isAuthenticated, isPaidUser, upgradePlan, openAuthModal } = useAuth();
   const router = useRouter();
 
   const plans = [
@@ -112,8 +112,8 @@ export default function PricingPage() {
             Choose a plan tailored to your sales volume. Recover thousands in disputed deductions with ready-to-submit claim dossiers.
           </p>
 
-          {/* Current Plan Indicator if logged in */}
-          {user && (
+          {/* Current Plan Indicator only if authenticated AND paid */}
+          {isAuthenticated && isPaidUser && user && user.plan !== 'free' && (
             <div className="mt-4 inline-flex items-center space-x-2 px-3.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
               <span>Your Active Plan:</span>
               <strong className="text-emerald-600 dark:text-emerald-400 uppercase font-black">{user.plan}</strong>
@@ -126,7 +126,7 @@ export default function PricingPage() {
         {/* 3-Tier Pricing Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 items-stretch">
           {plans.map((plan) => {
-            const isCurrentPlan = user?.plan === plan.planKey;
+            const isCurrentPlan = Boolean(isAuthenticated && isPaidUser && user?.plan === plan.planKey && user?.plan !== 'free');
 
             return (
               <div
@@ -205,6 +205,11 @@ export default function PricingPage() {
                   <button
                     disabled={isCurrentPlan}
                     onClick={() => {
+                      if (!isAuthenticated) {
+                        openAuthModal(`Please sign in or create an account to subscribe to the ${plan.name} Plan.`);
+                        return;
+                      }
+
                       openRazorpayCheckout({
                         planName: plan.name,
                         amount: plan.amount,

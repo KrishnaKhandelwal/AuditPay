@@ -30,7 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
   const pathname = usePathname();
   const router = useRouter();
   const { hasData, currentView, setCurrentView, resetAudit } = useAudit();
-  const { user, isAuthenticated, openAuthModal, logout, upgradePlan } = useAuth();
+  const { user, isAuthenticated, isPaidUser, openAuthModal, logout } = useAuth();
   
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -66,9 +66,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
   const isDashboardActive = pathname === '/' && currentView === 'dashboard';
   const isPricingActive = pathname === '/pricing';
   const isHowItWorksActive = pathname === '/how-it-works';
-
-  const planBadgeText = user?.plan ? user.plan.toUpperCase() : 'FREE';
-  const isPaidUser = user && user.plan !== 'free';
 
   return (
     <header className="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 shadow-xs transition-colors duration-200">
@@ -152,28 +149,44 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
             <ThemeToggle />
           </div>
 
+          {/* Persistent Plan Pill - FREE PLAN by default, paid plan only after payment and when logged in */}
+          <div className="pl-1 sm:pl-2">
+            {isPaidUser && user ? (
+              <Link
+                href="/pricing"
+                className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black tracking-wider uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition shadow-xs cursor-pointer"
+                title={`${user.plan.toUpperCase()} Plan Active • Click to view subscription`}
+              >
+                <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>{user.plan.toUpperCase()} PLAN</span>
+              </Link>
+            ) : (
+              <Link
+                href="/pricing"
+                className="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition cursor-pointer"
+                title="Current tier: Free Plan. Click to view upgrade options."
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500 shrink-0" />
+                <span>FREE PLAN</span>
+              </Link>
+            )}
+          </div>
+
           {/* User Account / Profile Section */}
           <div className="relative pl-1" ref={dropdownRef}>
             {isAuthenticated ? (
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center space-x-2 p-1 pl-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 bg-slate-50 dark:bg-slate-900 transition-all cursor-pointer"
+                className="flex items-center space-x-2 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 bg-slate-50 dark:bg-slate-900 transition-all cursor-pointer"
               >
                 <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
                   {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="hidden lg:flex flex-col text-left">
-                  <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate max-w-[90px]">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate max-w-[100px]">
                     {user?.brandName || user?.name}
                   </span>
                 </div>
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${
-                  isPaidUser 
-                    ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800' 
-                    : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                }`}>
-                  {planBadgeText}
-                </span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
             ) : (
