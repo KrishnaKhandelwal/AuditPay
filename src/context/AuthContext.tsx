@@ -16,6 +16,15 @@ export interface UserProfile {
   joinedAt: string;
 }
 
+export interface RegisteredAccount {
+  id: string;
+  name: string;
+  email: string;
+  brandName: string;
+  password: string;
+  createdAt: string;
+}
+
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
@@ -24,8 +33,8 @@ interface AuthContextType {
   authModalReason: string;
   isPaywallModalOpen: boolean;
   paywallFeatureName: string;
-  login: (email: string, name?: string, brandName?: string) => void;
-  signup: (name: string, email: string, brandName: string, password?: string) => void;
+  login: (email: string, password: string) => { success: boolean; error?: string };
+  signup: (name: string, email: string, brandName: string, password: string) => { success: boolean; error?: string };
   logout: () => void;
   upgradePlan: (plan: PlanType) => void;
   incrementAuditCount: () => boolean;
@@ -47,6 +56,28 @@ const PLAN_LIMITS: Record<PlanType, number> = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Helper to access registered users in localStorage
+const getRegisteredUsers = (): Record<string, RegisteredAccount> => {
+  if (typeof window === 'undefined') return {};
+  try {
+    const data = localStorage.getItem('auditpay_registered_users');
+    return data ? JSON.parse(data) : {};
+  } catch {
+    return {};
+  }
+};
+
+const saveRegisteredUser = (account: RegisteredAccount) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const users = getRegisteredUsers();
+    users[account.email.toLowerCase().trim()] = account;
+    localStorage.setItem('auditpay_registered_users', JSON.stringify(users));
+  } catch (e) {
+    console.error('Failed to save registered user', e);
+  }
+};
 
 // Helper to access paid account registry in localStorage
 const getPaidRegistry = (): Record<string, { plan: PlanType; paidAt: string }> => {
@@ -80,15 +111,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
   const [paywallFeatureName, setPaywallFeatureName] = useState('');
 
-  // Hydrate user session from localStorage with strict payment verification
+  // Hydrate user session from localStorage with strict payment & registration verification
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem('auditpay_user_session');
       if (savedUser) {
         const parsed: UserProfile = JSON.parse(savedUser);
+        const registeredUsers = getRegisteredUsers();
         
-        // If guest or no email or guest ID, strictly reset to free and unpaid
-        if (!parsed.id || parsed.id.startsWith('guest_') || !parsed.email) {
+        // If guest or no email or not in registered users, strictly reset to guest free
+        if (!parsed.id || parsed.id.startsWith('guest_') || !parsed.email || !registeredUsers[parsed.email.toLowerCase().trim()]) {
           parsed.id = 'guest_' + Math.random().toString(36).substring(2, 8);
           parsed.name = 'Guest Merchant';
           parsed.email = 'founder@d2cbrand.com';
@@ -142,43 +174,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = (email: string, name?: string, brandName?: string) => {
+  const login = (email: string, password: string): { success: boolean; error?: string } => {
     const cleanEmail = email.trim().toLowerCase();
+    const registeredUsers = getRegisteredUsers();
+    const existingAccount = registeredUsers[cleanEmail];
+
+    // If new / first time user directly tries to login without signing up
+    if (!existingAccount) {
+      return {
+        success: false,
+        error: 'Account does not exist with this email. Please sign up or create an account first.',
+      };
+    }
+
+    // Verify credentials
+    if (existingAccount.password && existingAccount.password !== password) {
+      return {
+        success: false,
+        error: 'Incorrect password. Please verify your credentials and try again.',
+      };
+    }
+
     const registry = getPaidRegistry();
     const paidRecord = registry[cleanEmail];
     const plan: PlanType = (paidRecord && paidRecord.plan) || 'free';
     const isPaid = Boolean(paidRecord && paidRecord.plan !== 'free');
 
     const newUser: UserProfile = {
-      id: 'usr_' + Date.now().toString(36),
-      name: name || cleanEmail.split('@')[0],
+      id: existingAccount.id,
+      name: existingAccount.name,
       email: cleanEmail,
-      brandName: brandName || 'My D2C Brand',
+      brandName: existingAccount.brandName,
       plan,
       isPaid,
       auditsUsedThisMonth: 0,
       auditsLimit: PLAN_LIMITS[plan],
-      joinedAt: new Date().toISOString(),
+      joinedAt: existingAccount.createdAt || new Date().toISOString(),
     };
     saveUserSession(newUser);
     closeAuthModal();
+    return { success: true };
   };
 
-  const signup = (name: string, email: string, brandName: string) => {
+  const signup = (name: string, email: string, brandName: string, password: string): { success: boolean; error?: string } => {
     const cleanEmail = email.trim().toLowerCase();
-    const newUser: UserProfile = {
+    const registeredUsers = getRegisteredUsers();
+
+    if (registeredUsers[cleanEmail]) {
+      return {
+        success: false,
+        error: 'An account with this email already exists. Please sign in with your credentials.',
+      };
+    }
+
+    const newAccount: RegisteredAccount = {
       id: 'usr_' + Date.now().toString(36),
       name: name.trim(),
       email: cleanEmail,
       brandName: brandName.trim() || 'My D2C Brand',
-      plan: 'free',
-      isPaid: false,
-      auditsUsedThisMonth: 0,
-      auditsLimit: PLAN_LIMITS.free,
-      joinedAt: new Date().toISOString(),
+      password: password,
+      createdAt: new Date().toISOString(),
     };
-    saveUserSession(newUser);
-    closeAuthModal();
+    saveRegisteredUser(newAccount);
+
+    // Account registered! User will now log in with the same credentials as requested
+    return { success: true };
   };
 
   const logout = () => {

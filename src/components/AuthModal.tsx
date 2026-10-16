@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Lock, Mail, Building, User, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { X, Lock, Mail, Building, User, ArrowRight, ShieldCheck, Zap, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export const AuthModal: React.FC = () => {
@@ -13,26 +13,57 @@ export const AuthModal: React.FC = () => {
   const [name, setName] = useState('');
   const [brandName, setBrandName] = useState('');
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [showSwitchToSignup, setShowSwitchToSignup] = useState(false);
 
   if (!isAuthModalOpen) return null;
+
+  const handleTabChange = (newTab: 'signin' | 'signup') => {
+    setTab(newTab);
+    setError('');
+    setSuccessMsg('');
+    setShowSwitchToSignup(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
+    setShowSwitchToSignup(false);
 
-    if (!email || !email.includes('@')) {
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
       setError('Please provide a valid business email address.');
       return;
     }
 
+    if (!password || password.length < 4) {
+      setError('Please enter a password with at least 4 characters.');
+      return;
+    }
+
     if (tab === 'signin') {
-      login(email, email.split('@')[0], 'D2C Merchant');
+      const result = login(cleanEmail, password);
+      if (!result.success) {
+        setError(result.error || 'Failed to sign in.');
+        if (result.error?.toLowerCase().includes('does not exist')) {
+          setShowSwitchToSignup(true);
+        }
+      }
     } else {
       if (!name.trim()) {
         setError('Please enter your full name.');
         return;
       }
-      signup(name, email, brandName || 'My D2C Brand');
+      const result = signup(name, cleanEmail, brandName || 'My D2C Brand', password);
+      if (!result.success) {
+        setError(result.error || 'Failed to create account.');
+      } else {
+        // First-time user registered successfully! Direct them to sign in with their credentials
+        setSuccessMsg('Account created successfully! Please sign in with your credentials.');
+        setPassword('');
+        setTab('signin');
+      }
     }
   };
 
@@ -77,8 +108,8 @@ export const AuthModal: React.FC = () => {
         <div className="flex rounded-xl bg-slate-100 dark:bg-slate-800/80 p-1 mb-5 text-xs font-semibold">
           <button
             type="button"
-            onClick={() => { setTab('signin'); setError(''); }}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            onClick={() => handleTabChange('signin')}
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer ${
               tab === 'signin'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -88,8 +119,8 @@ export const AuthModal: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => { setTab('signup'); setError(''); }}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            onClick={() => handleTabChange('signup')}
+            className={`flex-1 py-2 rounded-lg transition-all cursor-pointer ${
               tab === 'signup'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
@@ -99,10 +130,35 @@ export const AuthModal: React.FC = () => {
           </button>
         </div>
 
+        {/* Success message */}
+        {successMsg && (
+          <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs flex items-center space-x-2 animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span className="font-semibold">{successMsg}</span>
+          </div>
+        )}
+
         {/* Error message */}
         {error && (
-          <div className="mb-4 p-2.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 text-xs">
-            {error}
+          <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs space-y-2 animate-in fade-in">
+            <div className="flex items-start space-x-2">
+              <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+            {showSwitchToSignup && (
+              <button
+                type="button"
+                onClick={() => {
+                  setTab('signup');
+                  setError('');
+                  setShowSwitchToSignup(false);
+                }}
+                className="w-full py-1.5 px-3 rounded-lg text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition cursor-pointer flex items-center justify-center space-x-1"
+              >
+                <span>Create New Account with {email}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         )}
 
