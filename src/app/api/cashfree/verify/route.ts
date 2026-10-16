@@ -1,12 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { getCashfree } from '@/lib/cashfree';
 
-export const dynamic = 'force-dynamic';
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const orderId = searchParams.get('order_id');
+    const orderId = request.nextUrl.searchParams.get('order_id');
 
     if (!orderId) {
       return NextResponse.json({ error: 'order_id is required' }, { status: 400 });
