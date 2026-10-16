@@ -85,12 +85,6 @@ export default function PricingPage() {
     },
   ];
 
-  const handleTestActivation = (planName: string, planKey: PlanType) => {
-    upgradePlan(planKey);
-    setActivePlanName(planName);
-    setSuccessPaymentId('test_sub_' + Math.random().toString(36).substring(2, 9));
-  };
-
   return (
     <div className="min-h-screen bg-subtle-canvas text-slate-800 dark:text-slate-100 flex flex-col selection:bg-emerald-500/10 transition-colors duration-200">
       
@@ -221,7 +215,7 @@ export default function PricingPage() {
                           setSuccessPaymentId(paymentId);
                         },
                         onError: (err) => {
-                          alert(`Razorpay checkout notice: ${err}\n\nTip: You can use the '⚡ Test / Activate Instantly' button below for quick sandbox activation.`);
+                          alert(`Payment checkout notice: ${err}`);
                         },
                       });
                     }}
@@ -233,17 +227,6 @@ export default function PricingPage() {
                   >
                     {isCurrentPlan ? '✓ Current Active Plan' : plan.buttonText}
                   </button>
-
-                  {/* Instant Test Mode button */}
-                  {!isCurrentPlan && (
-                    <button
-                      type="button"
-                      onClick={() => handleTestActivation(plan.name, plan.planKey)}
-                      className="w-full text-center py-2 text-[11px] text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold transition cursor-pointer mt-1"
-                    >
-                      ⚡ Test / Activate Instantly (Sandbox)
-                    </button>
-                  )}
                 </div>
 
               </div>

@@ -3,11 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { X, Lock, CheckCircle2, Sparkles, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { X, Lock, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export const PaywallModal: React.FC = () => {
-  const { isPaywallModalOpen, paywallFeatureName, closePaywallModal, upgradePlan } = useAuth();
+  const { isPaywallModalOpen, paywallFeatureName, closePaywallModal } = useAuth();
   const router = useRouter();
 
   if (!isPaywallModalOpen) return null;
@@ -15,11 +15,6 @@ export const PaywallModal: React.FC = () => {
   const handleSelectPlan = (plan: 'starter' | 'growth') => {
     closePaywallModal();
     router.push('/pricing');
-  };
-
-  const handleInstantUnlockDemo = (plan: 'starter' | 'growth') => {
-    upgradePlan(plan);
-    closePaywallModal();
   };
 
   return (
@@ -126,21 +121,7 @@ export const PaywallModal: React.FC = () => {
 
         </div>
 
-        {/* Demo Fast Unlock Option */}
-        <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/60 flex items-center justify-between">
-          <div className="text-[11px] text-slate-600 dark:text-slate-400">
-            <span className="font-semibold text-slate-800 dark:text-slate-200">Testing the product?</span>
-            <span className="block text-[10px] text-slate-400">Simulate subscription to test full export features:</span>
-          </div>
-          <button
-            onClick={() => handleInstantUnlockDemo('growth')}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40 transition cursor-pointer shrink-0"
-          >
-            ⚡ Test Unlock
-          </button>
-        </div>
-
-        <div className="mt-4 text-center">
+        <div className="mt-2 text-center">
           <Link
             href="/pricing"
             onClick={closePaywallModal}

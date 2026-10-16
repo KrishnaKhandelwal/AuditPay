@@ -36,10 +36,6 @@ export const AuthModal: React.FC = () => {
     }
   };
 
-  const handleQuickDemo = (planType: 'free' | 'growth' = 'free') => {
-    login('arjun@urbanbotanics.in', 'Arjun Sharma', 'Urban Botanics D2C', planType);
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
       <div 
@@ -192,32 +188,7 @@ export const AuthModal: React.FC = () => {
           </button>
         </form>
 
-        {/* Quick Demo Access Divider */}
-        <div className="relative my-5">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
-          </div>
-          <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-            <span className="bg-white dark:bg-slate-900 px-2 text-slate-400 font-semibold">Or Instant Access</span>
-          </div>
-        </div>
 
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickDemo('free')}
-            className="flex-1 py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300 transition text-center cursor-pointer"
-          >
-            ⚡ Demo (Free Tier)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo('growth')}
-            className="flex-1 py-2 px-2.5 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100/50 text-[11px] font-semibold text-emerald-800 dark:text-emerald-300 transition text-center cursor-pointer"
-          >
-            👑 Demo (Growth Plan)
-          </button>
-        </div>
 
         <p className="text-[10px] text-center text-slate-400 dark:text-slate-500 mt-4">
           By continuing, you agree to our terms of service and confidential in-memory data processing.

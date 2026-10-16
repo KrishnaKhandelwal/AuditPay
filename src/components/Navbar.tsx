@@ -237,20 +237,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
                       </span>
                     )}
                   </Link>
-
-                  {/* Fast demo tester switch */}
-                  {!isPaidUser && (
-                    <button
-                      onClick={() => {
-                        upgradePlan('growth');
-                        setUserDropdownOpen(false);
-                      }}
-                      className="w-full text-left flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition cursor-pointer"
-                    >
-                      <Zap className="w-3.5 h-3.5" />
-                      <span>Switch to Demo Growth Plan</span>
-                    </button>
-                  )}
                 </div>
 
                 {/* Log Out */}
