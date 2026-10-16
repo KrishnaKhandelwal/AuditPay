@@ -11,12 +11,15 @@ import {
   Send,
   ChevronLeft,
   ChevronRight,
-  MapPin
+  Lock,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import confetti from 'canvas-confetti';
 import { DiscrepancyItem, PlatformType } from '@/types/audit';
 import { generateDisputeClaimLetter } from '@/lib/reconciliationEngine';
+import { useAuth } from '@/context/AuthContext';
 
 interface DiscrepancyTableProps {
   discrepancies: DiscrepancyItem[];
@@ -48,10 +51,18 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
   discrepancies, 
   detectedPlatform 
 }) => {
+  const { 
+    canExportDisputePackage, 
+    canGenerateDisputeEmail, 
+    canViewAllDiscrepancies, 
+    openPaywallModal,
+    user 
+  } = useAuth();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('ALL');
   const [selectedCity, setSelectedCity] = useState<string>('ALL');
-  const [brandName, setBrandName] = useState('Our D2C Brand');
+  const [brandName, setBrandName] = useState(user?.brandName || 'Our D2C Brand');
   const [copiedLetter, setCopiedLetter] = useState(false);
   const [showLetterModal, setShowLetterModal] = useState(false);
   
@@ -89,11 +100,22 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
     return matchesSearch && matchesType && matchesCity;
   });
 
+  const isFreePlan = !canViewAllDiscrepancies();
+  const freePreviewLimit = 3;
+  const lockedCount = isFreePlan ? Math.max(0, filtered.length - freePreviewLimit) : 0;
+  const lockedAmount = isFreePlan 
+    ? filtered.slice(freePreviewLimit).reduce((acc, curr) => acc + curr.disputedAmount, 0)
+    : 0;
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const startIndex = (safeCurrentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, filtered.length);
-  const paginatedItems = filtered.slice(startIndex, endIndex);
+
+  // If on free plan, only display the top 3 items
+  const paginatedItems = isFreePlan 
+    ? filtered.slice(0, freePreviewLimit) 
+    : filtered.slice(startIndex, endIndex);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -101,7 +123,12 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
     }
   };
 
-  const exportDisputeCSV = () => {
+  const handleExportClick = () => {
+    if (!canExportDisputePackage()) {
+      openPaywallModal('Excel Dispute Claim Package');
+      return;
+    }
+
     confetti({ particleCount: 70, spread: 50, origin: { y: 0.8 } });
 
     const exportData = filtered.map(d => ({
@@ -125,6 +152,14 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Dispute_Ledger');
     XLSX.writeFile(wb, `Dispute_Claim_Package_${detectedPlatform}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const handleGenerateEmailClick = () => {
+    if (!canGenerateDisputeEmail()) {
+      openPaywallModal('Official Vendor SLA Dispute Email');
+      return;
+    }
+    setShowLetterModal(true);
   };
 
   const handleCopyLetter = () => {
@@ -156,12 +191,19 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
       {/* Table Header Bar */}
       <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center space-x-2">
-            <span>Deduction Leakage Breakdown</span>
-            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 text-[#065F46] dark:text-emerald-300 border border-[#A7F3D0] dark:border-emerald-800/60">
-              {filtered.length} Disputed Items
-            </span>
-          </h2>
+          <div className="flex items-center space-x-2">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center space-x-2">
+              <span>Deduction Leakage Breakdown</span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#ECFDF5] dark:bg-emerald-950/50 text-[#065F46] dark:text-emerald-300 border border-[#A7F3D0] dark:border-emerald-800/60">
+                {filtered.length} Disputed Items
+              </span>
+            </h2>
+            {isFreePlan && (
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/60">
+                Free Preview (Top 3)
+              </span>
+            )}
+          </div>
           <p className="text-xs text-slate-400 dark:text-slate-400 mt-0.5">
             Verified discrepancies ready for immediate dispute submission.
           </p>
@@ -170,17 +212,19 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
           <button
-            onClick={() => setShowLetterModal(true)}
-            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+            onClick={handleGenerateEmailClick}
+            className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer relative"
           >
+            {isFreePlan && <Lock className="w-3 h-3 text-amber-500" />}
             <FileText className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
             <span>Generate Dispute Email</span>
           </button>
 
           <button
-            onClick={exportDisputeCSV}
-            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[#059669] hover:bg-[#047857] text-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:scale-[1.01] cursor-pointer"
+            onClick={handleExportClick}
+            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[#059669] hover:bg-[#047857] text-white transition-all shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:scale-[1.01] cursor-pointer relative"
           >
+            {isFreePlan && <Lock className="w-3 h-3 text-amber-200" />}
             <Download className="w-3.5 h-3.5" />
             <span>Download Dispute Package (Excel)</span>
           </button>
@@ -199,12 +243,12 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-2xs"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 shadow-2xs"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 text-xs">
-          {/* Categories Dropdown (Always Kept) */}
+          {/* Categories Dropdown */}
           <div className="flex items-center space-x-1.5">
             <select
               value={selectedType}
@@ -212,7 +256,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
                 setSelectedType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500 shadow-2xs font-medium cursor-pointer"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-hidden focus:border-emerald-500 shadow-2xs font-medium cursor-pointer"
             >
               <option value="ALL">All Categories</option>
               <option value="GHOST_RETURN">Phantom / Ghost RTV</option>
@@ -222,7 +266,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
             </select>
           </div>
 
-          {/* Filter by City: ACTIVATES FILTER ICON AND SHOWS DROPDOWN ONLY IF MULTIPLE CITIES EXIST */}
+          {/* Filter by City */}
           {hasMultipleCities && (
             <div className="flex items-center space-x-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 shadow-2xs">
               <Filter className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -233,7 +277,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
                   setSelectedCity(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="bg-transparent border-0 text-slate-700 dark:text-slate-200 text-xs focus:outline-none font-medium cursor-pointer pr-1"
+                className="bg-transparent border-0 text-slate-700 dark:text-slate-200 text-xs focus:outline-hidden font-medium cursor-pointer pr-1"
               >
                 <option value="ALL">All Cities ({uniqueCities.length})</option>
                 {uniqueCities.map((city) => (
@@ -323,12 +367,58 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
                 </tr>
               ))
             )}
+
+            {/* Blurred Rows & Paywall Card for Free Plan */}
+            {isFreePlan && lockedCount > 0 && (
+              <>
+                <tr className="opacity-30 blur-[1px] select-none pointer-events-none">
+                  <td className="py-3 px-5"><div className="w-20 h-4 bg-slate-300 dark:bg-slate-700 rounded" /></td>
+                  <td className="py-3 px-5"><div className="w-32 h-4 bg-slate-300 dark:bg-slate-700 rounded" /></td>
+                  <td className="py-3 px-5"><div className="w-16 h-4 bg-slate-300 dark:bg-slate-700 rounded-full" /></td>
+                  <td className="py-3 px-5 text-center"><div className="w-12 h-4 bg-slate-300 dark:bg-slate-700 rounded mx-auto" /></td>
+                  <td className="py-3 px-5 text-right"><div className="w-16 h-4 bg-rose-200 dark:bg-rose-900 rounded ml-auto" /></td>
+                  <td className="py-3 px-5"><div className="w-36 h-4 bg-slate-300 dark:bg-slate-700 rounded" /></td>
+                </tr>
+                <tr className="opacity-20 blur-[2px] select-none pointer-events-none">
+                  <td className="py-3 px-5"><div className="w-24 h-4 bg-slate-300 dark:bg-slate-700 rounded" /></td>
+                  <td className="py-3 px-5"><div className="w-28 h-4 bg-slate-300 dark:bg-slate-700 rounded" /></td>
+                  <td className="py-3 px-5"><div className="w-16 h-4 bg-slate-300 dark:bg-slate-700 rounded-full" /></td>
+                  <td className="py-3 px-5 text-center"><div className="w-12 h-4 bg-slate-300 dark:bg-slate-700 rounded mx-auto" /></td>
+                  <td className="py-3 px-5 text-right"><div className="w-16 h-4 bg-rose-200 dark:bg-rose-900 rounded ml-auto" /></td>
+                  <td className="py-3 px-5"><div className="w-40 h-4 bg-slate-300 dark:bg-slate-700 rounded" /></td>
+                </tr>
+              </>
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Pagination Footer */}
-      {filtered.length > 0 && (
+      {/* Paywall Callout Banner when items are locked */}
+      {isFreePlan && lockedCount > 0 && (
+        <div className="p-6 bg-gradient-to-r from-emerald-50/70 via-teal-50/70 to-emerald-50/70 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border-t border-emerald-200/80 dark:border-emerald-800/60 text-center flex flex-col items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 mb-3 shadow-sm">
+            <Lock className="w-5 h-5 stroke-[2.5]" />
+          </div>
+
+          <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1">
+            🔒 {lockedCount} More Disputed Items Hidden (Valued at ₹{lockedAmount.toLocaleString('en-IN')})
+          </h3>
+          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mb-4">
+            Free tier displays the top 3 high-impact discrepancies. Upgrade to Starter or Growth to unlock full SKU lines, dark-store city breakdown, and 1-click Excel claim packages.
+          </p>
+
+          <button
+            onClick={() => openPaywallModal('Complete Line-Item Ledger')}
+            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 transition-all hover:scale-[1.02] cursor-pointer"
+          >
+            <span>Unlock All {filtered.length} Discrepancies Now</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Pagination Footer (For Subscribed Users) */}
+      {!isFreePlan && filtered.length > 0 && (
         <div className="px-5 sm:px-6 py-3 bg-[#F8FAFC] dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
           <div>
             Showing <span className="text-slate-800 dark:text-slate-200 font-medium">{startIndex + 1}</span> to{' '}
@@ -426,7 +516,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
                 type="text"
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
-                className="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500 shadow-2xs"
+                className="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden focus:border-emerald-500 shadow-2xs"
               />
             </div>
 

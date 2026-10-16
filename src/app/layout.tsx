@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuditProvider } from "@/context/AuditContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { AuthModal } from "@/components/AuthModal";
+import { PaywallModal } from "@/components/PaywallModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,9 +50,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-full flex flex-col bg-subtle-canvas text-slate-800 dark:text-slate-100" suppressHydrationWarning>
         <ThemeProvider>
-          <AuditProvider>
-            {children}
-          </AuditProvider>
+          <AuthProvider>
+            <AuditProvider>
+              {children}
+              <AuthModal />
+              <PaywallModal />
+            </AuditProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

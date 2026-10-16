@@ -9,8 +9,9 @@ import { DiscrepancyTable } from '@/components/DiscrepancyTable';
 import { SettlementRow, WarehouseRow, DiscrepancyItem, AuditSummary, PlatformType } from '@/types/audit';
 import { runReconciliationAudit } from '@/lib/reconciliationEngine';
 import { parseSettlementFile } from '@/lib/fileParsers';
-import { CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Zap, UserPlus } from 'lucide-react';
 import { useAudit } from '@/context/AuditContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
   const {
@@ -22,6 +23,15 @@ export default function Home() {
     setCurrentView,
     saveAuditResult,
   } = useAudit();
+
+  const {
+    canPerformAudit,
+    incrementAuditCount,
+    openPaywallModal,
+    isAuthenticated,
+    openAuthModal,
+    user
+  } = useAuth();
 
   const [isFetching, setIsFetching] = useState(false);
   const [activeFileName, setActiveFileName] = useState('');
@@ -40,6 +50,12 @@ export default function Home() {
     platform: PlatformType,
     fileName: string
   ) => {
+    // Check user audit quota before running
+    if (!canPerformAudit()) {
+      openPaywallModal('Monthly Audit Quota Limit Reached');
+      return;
+    }
+
     setActiveFileName(fileName);
     
     const emptyWarehouse: WarehouseRow[] = [];
@@ -79,6 +95,7 @@ export default function Home() {
         stagedAudit.platform,
         stagedAudit.fileName
       );
+      incrementAuditCount();
     }
     setIsFetching(false);
   };
@@ -150,9 +167,29 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          /* State 3: Dashboard (Shows data if uploaded, or empty 'no data' state if not uploaded yet) */
+          /* State 3: Dashboard */
           <div className="space-y-6">
-            {/* KPI Cards (renders 'No data' if no file uploaded) */}
+            
+            {/* Account Save Prompt for Guest Users with Active Audit */}
+            {hasData && !isAuthenticated && (
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <div className="flex items-center space-x-2 text-emerald-900 dark:text-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                  <span>
+                    <strong>Running in guest preview session.</strong> Create a merchant account to permanently save this audit and your recovered deduction dossiers.
+                  </span>
+                </div>
+                <button
+                  onClick={() => openAuthModal('Create a merchant account to save your audit results and dispute files')}
+                  className="px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 shadow-xs cursor-pointer flex items-center space-x-1.5"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>Create Account to Save</span>
+                </button>
+              </div>
+            )}
+
+            {/* KPI Cards */}
             <SummaryCards summary={summary} />
 
             {/* Discrepancy Table */}
