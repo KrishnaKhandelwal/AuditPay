@@ -302,9 +302,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
 
       </div>
 
-      {/* Mobile Navigation Drawer / Panel */}
+      {/* Mobile Navigation Drawer / Panel (Floats OVER page content without shifting) */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 py-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 space-y-4 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
+        <>
+          {/* Backdrop overlay below header to close on outside tap */}
+          <div 
+            onClick={() => setMobileMenuOpen(false)}
+            className="md:hidden fixed inset-0 top-16 bg-slate-950/40 dark:bg-black/60 backdrop-blur-xs z-40 animate-in fade-in duration-200"
+            aria-hidden="true"
+          />
+
+          {/* Floating Mobile Drawer */}
+          <div className="md:hidden absolute top-full left-0 right-0 w-full border-b border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 py-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 space-y-4 max-h-[calc(100vh-4.5rem)] overflow-y-auto z-50">
           
           {/* User profile card in mobile drawer if logged in */}
           {isAuthenticated && user ? (
@@ -447,6 +456,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
           </div>
 
         </div>
+        </>
       )}
 
     </header>
