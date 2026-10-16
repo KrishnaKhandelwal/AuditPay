@@ -304,7 +304,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onUploadClick }) => {
 
       {/* Mobile Navigation Drawer / Panel */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 py-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 space-y-4">
+        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl px-4 py-5 shadow-2xl animate-in slide-in-from-top-2 duration-200 space-y-4 max-h-[calc(100vh-4.5rem)] overflow-y-auto">
           
           {/* User profile card in mobile drawer if logged in */}
           {isAuthenticated && user ? (

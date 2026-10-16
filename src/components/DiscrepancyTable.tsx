@@ -13,7 +13,9 @@ import {
   ChevronRight,
   Lock,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  LayoutGrid,
+  Table as TableIcon
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import confetti from 'canvas-confetti';
@@ -68,6 +70,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
   const [showLetterModal, setShowLetterModal] = useState(false);
   
   const [currentPage, setCurrentPage] = useState(1);
+  const [mobileViewMode, setMobileViewMode] = useState<'cards' | 'table'>('cards');
   const pageSize = 10;
 
   // Extract unique cities present in the dataset
@@ -292,14 +295,137 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
         </div>
       </div>
 
-      {/* Mobile Swipe Table Helper */}
-      <div className="md:hidden px-4 py-1.5 bg-emerald-50/50 dark:bg-emerald-950/30 text-[10px] text-emerald-700 dark:text-emerald-300 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
-        <span>Swipe table horizontally to see all columns</span>
-        <span className="font-mono font-bold">⇄</span>
+      {/* Mobile View Toggle: Cards vs Table */}
+      <div className="md:hidden px-4 py-2 bg-[#F8FAFC] dark:bg-slate-950/80 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+          Display Mode:
+        </span>
+        <div className="flex items-center space-x-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-0.5 rounded-lg shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setMobileViewMode('cards')}
+            className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-semibold transition cursor-pointer ${
+              mobileViewMode === 'cards'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <LayoutGrid className="w-3 h-3" />
+            <span>Cards</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileViewMode('table')}
+            className={`inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-semibold transition cursor-pointer ${
+              mobileViewMode === 'table'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <TableIcon className="w-3 h-3" />
+            <span>Table (⇄)</span>
+          </button>
+        </div>
       </div>
 
-      {/* Table Data */}
-      <div className="overflow-x-auto">
+      {/* 1. Mobile Cards View (Visible on mobile by default) */}
+      <div className={`p-3 space-y-3 md:hidden ${mobileViewMode === 'table' ? 'hidden' : 'block'}`}>
+        {paginatedItems.length === 0 ? (
+          <div className="py-10 text-center text-slate-400 dark:text-slate-500">
+            <span className="font-bold text-sm block mb-1 text-slate-700 dark:text-slate-300">No data available</span>
+            <span className="text-xs">
+              {!isAuthenticated 
+                ? 'Sign in to your merchant account to upload settlement statements.' 
+                : 'Upload a settlement statement to run deduction reconciliation.'}
+            </span>
+          </div>
+        ) : (
+          paginatedItems.map((item) => (
+            <div
+              key={item.id}
+              className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 space-y-2.5 transition-all"
+            >
+              {/* Card Header: DN, Platform, Disputed Amount */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <span className="font-mono font-bold text-xs text-slate-900 dark:text-white block truncate">
+                    {item.debitNoteNumber}
+                  </span>
+                  <div className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold mt-0.5 truncate">
+                    {item.platform} • {item.date}
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-sm font-black text-[#BE123C] dark:text-rose-400">
+                    ₹{item.disputedAmount.toLocaleString('en-IN')}
+                  </div>
+                  <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
+                    Claimable
+                  </span>
+                </div>
+              </div>
+
+              {/* Product & PO Info */}
+              <div className="text-xs space-y-0.5 pt-2 border-t border-slate-200/60 dark:border-slate-800/80">
+                <p className="font-semibold text-slate-800 dark:text-slate-100 line-clamp-1" title={item.productTitle}>
+                  {item.productTitle}
+                </p>
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                  <span>PO: {item.poNumber || 'N/A'}</span>
+                  <span>SKU: {item.sku}</span>
+                </div>
+              </div>
+
+              {/* Units & Category Pill */}
+              <div className="flex items-center justify-between pt-1">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${getBadgeColor(item.type)}`}>
+                  {item.type.replace('_', ' ')}
+                </span>
+                <div className="text-[11px] font-mono">
+                  <span className="text-slate-500">Claimed: </span>
+                  <span className="font-bold text-rose-600 dark:text-rose-400">{item.claimedQty}</span>
+                  <span className="text-slate-400"> / </span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{item.actualQty}</span>
+                  <span className="text-rose-600 dark:text-rose-400 font-bold ml-1.5">(-{item.differenceQty})</span>
+                </div>
+              </div>
+
+              {/* Grounds & Evidence */}
+              <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800 text-[11px] space-y-1">
+                <div className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                  {item.reason}
+                </div>
+                {item.evidence && (
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500 italic">
+                    Evidence: {item.evidence}
+                  </div>
+                )}
+                {item.dcLocation && (
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                    DC Location: {item.dcLocation}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+
+        {/* Locked Preview Cards for Free Plan */}
+        {isFreePlan && lockedCount > 0 && (
+          <div className="p-4 rounded-xl border border-dashed border-amber-300 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 text-center space-y-1">
+            <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 mx-auto" />
+            <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+              +{lockedCount} More Disputed Items Locked
+            </p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              Worth ₹{lockedAmount.toLocaleString('en-IN')} in recoverable deductions
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* 2. Desktop Table View & Mobile Table (When toggled to table mode) */}
+      <div className={`overflow-x-auto ${mobileViewMode === 'cards' ? 'hidden md:block' : 'block'}`}>
         <table className="w-full min-w-[720px] text-left text-xs text-slate-600 dark:text-slate-300">
           <thead className="bg-[#F8FAFC] dark:bg-slate-950/60 text-slate-400 dark:text-slate-400 uppercase font-semibold text-[11px] border-b border-slate-100 dark:border-slate-800">
             <tr>
