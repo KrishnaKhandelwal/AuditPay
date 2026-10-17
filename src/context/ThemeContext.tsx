@@ -19,9 +19,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Check saved preference or system preference
     const saved = localStorage.getItem('auditpay-theme') as Theme | null;
-    const initialTheme: Theme = saved 
-      ? saved 
-      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const initialTheme: Theme = saved === 'dark' ? 'dark' : 'light';
 
     setThemeState(initialTheme);
     if (initialTheme === 'dark') {

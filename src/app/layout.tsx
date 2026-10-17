@@ -44,8 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               (function() {
                 try {
                   var saved = localStorage.getItem('auditpay-theme');
-                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  if (saved === 'dark' || (!saved && prefersDark)) {
+                  if (saved === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');
