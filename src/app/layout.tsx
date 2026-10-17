@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthModal } from "@/components/AuthModal";
 import { PaywallModal } from "@/components/PaywallModal";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <AuthModal />
               <PaywallModal />
+              <Analytics />
             </AuditProvider>
           </AuthProvider>
         </ThemeProvider>
