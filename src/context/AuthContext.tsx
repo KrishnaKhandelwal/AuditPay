@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 export type PlanType = 'free' | 'starter' | 'growth' | 'enterprise';
 
@@ -16,15 +18,6 @@ export interface UserProfile {
   joinedAt: string;
 }
 
-export interface RegisteredAccount {
-  id: string;
-  name: string;
-  email: string;
-  brandName: string;
-  password: string;
-  createdAt: string;
-}
-
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
@@ -33,11 +26,11 @@ interface AuthContextType {
   authModalReason: string;
   isPaywallModalOpen: boolean;
   paywallFeatureName: string;
-  login: (email: string, password: string) => { success: boolean; error?: string };
-  signup: (name: string, email: string, brandName: string, password: string) => { success: boolean; error?: string };
-  logout: () => void;
-  upgradePlan: (plan: PlanType) => void;
-  incrementAuditCount: () => boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (name: string, email: string, brandName: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  upgradePlan: (plan: PlanType) => Promise<void>;
+  incrementAuditCount: () => Promise<boolean>;
   canPerformAudit: () => boolean;
   canExportDisputePackage: () => boolean;
   canViewAllDiscrepancies: () => boolean;
@@ -57,52 +50,18 @@ const PLAN_LIMITS: Record<PlanType, number> = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Helper to access registered users in localStorage
-const getRegisteredUsers = (): Record<string, RegisteredAccount> => {
-  if (typeof window === 'undefined') return {};
-  try {
-    const data = localStorage.getItem('auditpay_registered_users');
-    return data ? JSON.parse(data) : {};
-  } catch {
-    return {};
-  }
-};
-
-const saveRegisteredUser = (account: RegisteredAccount) => {
-  if (typeof window === 'undefined') return;
-  try {
-    const users = getRegisteredUsers();
-    users[account.email.toLowerCase().trim()] = account;
-    localStorage.setItem('auditpay_registered_users', JSON.stringify(users));
-  } catch (e) {
-    console.error('Failed to save registered user', e);
-  }
-};
-
-// Helper to access paid account registry in localStorage
-const getPaidRegistry = (): Record<string, { plan: PlanType; paidAt: string }> => {
-  if (typeof window === 'undefined') return {};
-  try {
-    const data = localStorage.getItem('auditpay_paid_registry');
-    return data ? JSON.parse(data) : {};
-  } catch {
-    return {};
-  }
-};
-
-const savePaidRegistry = (email: string, plan: PlanType) => {
-  if (typeof window === 'undefined') return;
-  try {
-    const registry = getPaidRegistry();
-    registry[email.toLowerCase().trim()] = {
-      plan,
-      paidAt: new Date().toISOString(),
-    };
-    localStorage.setItem('auditpay_paid_registry', JSON.stringify(registry));
-  } catch (e) {
-    console.error('Failed to save paid registry', e);
-  }
-};
+// Fallback guest user template
+const createGuestUser = (): UserProfile => ({
+  id: 'guest_' + Math.random().toString(36).substring(2, 8),
+  name: 'Guest Merchant',
+  email: 'founder@d2cbrand.com',
+  brandName: 'My D2C Brand',
+  plan: 'free',
+  isPaid: false,
+  auditsUsedThisMonth: 0,
+  auditsLimit: PLAN_LIMITS.free,
+  joinedAt: new Date().toISOString(),
+});
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -111,176 +70,203 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
   const [paywallFeatureName, setPaywallFeatureName] = useState('');
 
-  // Hydrate user session from localStorage with strict payment & registration verification
+  // Map Supabase User to AuditPay UserProfile
+  const mapSupabaseUserToProfile = (sbUser: SupabaseUser): UserProfile => {
+    const meta = sbUser.user_metadata || {};
+    const plan: PlanType = (meta.plan as PlanType) || 'free';
+    const isPaid = Boolean(meta.is_paid && plan !== 'free');
+    const auditsLimit = Number(meta.audits_limit) || PLAN_LIMITS[plan];
+    const auditsUsedThisMonth = Number(meta.audits_used_this_month) || 0;
+
+    return {
+      id: sbUser.id,
+      name: meta.name || sbUser.email?.split('@')[0] || 'Merchant',
+      email: sbUser.email || '',
+      brandName: meta.brand_name || 'My D2C Brand',
+      plan,
+      isPaid,
+      auditsUsedThisMonth,
+      auditsLimit,
+      joinedAt: sbUser.created_at || new Date().toISOString(),
+    };
+  };
+
+  // Synchronize session on load and listen for real-time auth changes across tabs/devices
   useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem('auditpay_user_session');
-      if (savedUser) {
-        const parsed: UserProfile = JSON.parse(savedUser);
-        const registeredUsers = getRegisteredUsers();
-        
-        // If guest or no email or not in registered users, strictly reset to guest free
-        if (!parsed.id || parsed.id.startsWith('guest_') || !parsed.email || !registeredUsers[parsed.email.toLowerCase().trim()]) {
-          parsed.id = 'guest_' + Math.random().toString(36).substring(2, 8);
-          parsed.name = 'Guest Merchant';
-          parsed.email = 'founder@d2cbrand.com';
-          parsed.brandName = 'My D2C Brand';
-          parsed.plan = 'free';
-          parsed.isPaid = false;
-          parsed.auditsLimit = PLAN_LIMITS.free;
-        } else {
-          // Verify with paid registry to prevent unauthorized plan state
-          const registry = getPaidRegistry();
-          const paidRecord = registry[parsed.email.toLowerCase().trim()];
-          if (paidRecord && paidRecord.plan !== 'free') {
-            parsed.plan = paidRecord.plan;
-            parsed.isPaid = true;
-            parsed.auditsLimit = PLAN_LIMITS[paidRecord.plan];
-          } else {
-            parsed.plan = 'free';
-            parsed.isPaid = false;
-            parsed.auditsLimit = PLAN_LIMITS.free;
-          }
-        }
-        setUser(parsed);
-        localStorage.setItem('auditpay_user_session', JSON.stringify(parsed));
+    let mounted = true;
+
+    // Check active session from Supabase
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      if (session?.user) {
+        setUser(mapSupabaseUserToProfile(session.user));
       } else {
-        // Default guest user on free plan with 0 audits used
-        const guestUser: UserProfile = {
-          id: 'guest_' + Math.random().toString(36).substring(2, 8),
-          name: 'Guest Merchant',
-          email: 'founder@d2cbrand.com',
-          brandName: 'My D2C Brand',
-          plan: 'free',
-          isPaid: false,
-          auditsUsedThisMonth: 0,
-          auditsLimit: PLAN_LIMITS.free,
-          joinedAt: new Date().toISOString(),
-        };
-        setUser(guestUser);
-        localStorage.setItem('auditpay_user_session', JSON.stringify(guestUser));
+        setUser(createGuestUser());
       }
-    } catch (e) {
-      console.error('Failed to load user session', e);
-    }
+    });
+
+    // Listen for state changes (login, logout, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      if (session?.user) {
+        setUser(mapSupabaseUserToProfile(session.user));
+      } else {
+        setUser(createGuestUser());
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-  const saveUserSession = (updatedUser: UserProfile | null) => {
-    setUser(updatedUser);
-    if (updatedUser) {
-      localStorage.setItem('auditpay_user_session', JSON.stringify(updatedUser));
-    } else {
-      localStorage.removeItem('auditpay_user_session');
-    }
-  };
-
-  const login = (email: string, password: string): { success: boolean; error?: string } => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const cleanEmail = email.trim().toLowerCase();
-    const registeredUsers = getRegisteredUsers();
-    const existingAccount = registeredUsers[cleanEmail];
 
-    // If new / first time user directly tries to login without signing up
-    if (!existingAccount) {
-      return {
-        success: false,
-        error: 'Account does not exist with this email. Please sign up or create an account first.',
-      };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password,
+      });
+
+      if (error) {
+        if (
+          error.message.toLowerCase().includes('invalid login credentials') ||
+          error.message.toLowerCase().includes('invalid credentials')
+        ) {
+          return {
+            success: false,
+            error: 'Account does not exist with this email or password is incorrect. Please sign up first.',
+          };
+        }
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        setUser(mapSupabaseUserToProfile(data.user));
+        closeAuthModal();
+        return { success: true };
+      }
+
+      return { success: false, error: 'Failed to retrieve user session.' };
+    } catch (err: any) {
+      console.error('Supabase login error:', err);
+      return { success: false, error: err.message || 'Network error occurred during login.' };
     }
-
-    // Verify credentials
-    if (existingAccount.password && existingAccount.password !== password) {
-      return {
-        success: false,
-        error: 'Incorrect password. Please verify your credentials and try again.',
-      };
-    }
-
-    const registry = getPaidRegistry();
-    const paidRecord = registry[cleanEmail];
-    const plan: PlanType = (paidRecord && paidRecord.plan) || 'free';
-    const isPaid = Boolean(paidRecord && paidRecord.plan !== 'free');
-
-    const newUser: UserProfile = {
-      id: existingAccount.id,
-      name: existingAccount.name,
-      email: cleanEmail,
-      brandName: existingAccount.brandName,
-      plan,
-      isPaid,
-      auditsUsedThisMonth: 0,
-      auditsLimit: PLAN_LIMITS[plan],
-      joinedAt: existingAccount.createdAt || new Date().toISOString(),
-    };
-    saveUserSession(newUser);
-    closeAuthModal();
-    return { success: true };
   };
 
-  const signup = (name: string, email: string, brandName: string, password: string): { success: boolean; error?: string } => {
+  const signup = async (
+    name: string,
+    email: string,
+    brandName: string,
+    password: string
+  ): Promise<{ success: boolean; error?: string }> => {
     const cleanEmail = email.trim().toLowerCase();
-    const registeredUsers = getRegisteredUsers();
 
-    if (registeredUsers[cleanEmail]) {
-      return {
-        success: false,
-        error: 'An account with this email already exists. Please sign in with your credentials.',
-      };
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password,
+        options: {
+          data: {
+            name: name.trim(),
+            brand_name: brandName.trim() || 'My D2C Brand',
+            plan: 'free',
+            is_paid: false,
+            audits_used_this_month: 0,
+            audits_limit: PLAN_LIMITS.free,
+          },
+        },
+      });
+
+      if (error) {
+        if (
+          error.message.toLowerCase().includes('already registered') ||
+          error.message.toLowerCase().includes('already exists')
+        ) {
+          return {
+            success: false,
+            error: 'An account with this email already exists. Please sign in with your credentials.',
+          };
+        }
+        return { success: false, error: error.message };
+      }
+
+      // Check if user session was automatically established or if email confirmation is required
+      if (data.session && data.user) {
+        setUser(mapSupabaseUserToProfile(data.user));
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      console.error('Supabase signup error:', err);
+      return { success: false, error: err.message || 'Network error occurred during registration.' };
     }
-
-    const newAccount: RegisteredAccount = {
-      id: 'usr_' + Date.now().toString(36),
-      name: name.trim(),
-      email: cleanEmail,
-      brandName: brandName.trim() || 'My D2C Brand',
-      password: password,
-      createdAt: new Date().toISOString(),
-    };
-    saveRegisteredUser(newAccount);
-
-    // Account registered! User will now log in with the same credentials as requested
-    return { success: true };
   };
 
-  const logout = () => {
-    const guestUser: UserProfile = {
-      id: 'guest_' + Math.random().toString(36).substring(2, 8),
-      name: 'Guest Merchant',
-      email: 'founder@d2cbrand.com',
-      brandName: 'My D2C Brand',
-      plan: 'free',
-      isPaid: false,
-      auditsUsedThisMonth: 0,
-      auditsLimit: PLAN_LIMITS.free,
-      joinedAt: new Date().toISOString(),
-    };
-    saveUserSession(guestUser);
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error('Error signing out', e);
+    } finally {
+      setUser(createGuestUser());
+    }
   };
 
-  const upgradePlan = (plan: PlanType) => {
+  const upgradePlan = async (plan: PlanType) => {
     if (!user) return;
     const isPaid = plan !== 'free';
-    if (isPaid && user.email && !user.id.startsWith('guest_')) {
-      savePaidRegistry(user.email, plan);
-    }
-    const updated: UserProfile = {
-      ...user,
+    const auditsLimit = PLAN_LIMITS[plan];
+
+    // Optimistically update UI
+    setUser((prev) => (prev ? {
+      ...prev,
       plan,
       isPaid,
-      auditsLimit: PLAN_LIMITS[plan],
-    };
-    saveUserSession(updated);
+      auditsLimit,
+    } : null));
+
+    // Persist to Supabase cloud metadata
+    try {
+      await supabase.auth.updateUser({
+        data: {
+          plan,
+          is_paid: isPaid,
+          audits_limit: auditsLimit,
+        },
+      });
+    } catch (err) {
+      console.error('Failed to sync plan upgrade to Supabase:', err);
+    }
   };
 
-  const incrementAuditCount = (): boolean => {
+  const incrementAuditCount = async (): Promise<boolean> => {
     if (!user) return false;
     if (user.auditsUsedThisMonth >= user.auditsLimit && user.plan === 'free') {
       return false;
     }
-    const updated: UserProfile = {
-      ...user,
-      auditsUsedThisMonth: user.auditsUsedThisMonth + 1,
-    };
-    saveUserSession(updated);
+
+    const newCount = user.auditsUsedThisMonth + 1;
+
+    // Optimistically update UI
+    setUser((prev) => (prev ? {
+      ...prev,
+      auditsUsedThisMonth: newCount,
+    } : null));
+
+    // Persist to Supabase cloud metadata
+    try {
+      await supabase.auth.updateUser({
+        data: {
+          audits_used_this_month: newCount,
+        },
+      });
+    } catch (err) {
+      console.error('Failed to sync audit count to Supabase:', err);
+    }
+
     return true;
   };
 

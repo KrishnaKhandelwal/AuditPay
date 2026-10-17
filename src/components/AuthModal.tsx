@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Lock, Mail, Building, User, ArrowRight, ShieldCheck, Zap, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { X, Lock, Mail, Building, User, ArrowRight, ShieldCheck, Zap, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export const AuthModal: React.FC = () => {
@@ -15,6 +15,7 @@ export const AuthModal: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showSwitchToSignup, setShowSwitchToSignup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isAuthModalOpen) return null;
 
@@ -25,7 +26,7 @@ export const AuthModal: React.FC = () => {
     setShowSwitchToSignup(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
@@ -37,33 +38,43 @@ export const AuthModal: React.FC = () => {
       return;
     }
 
-    if (!password || password.length < 4) {
-      setError('Please enter a password with at least 4 characters.');
+    if (!password || password.length < 6) {
+      setError('Please enter a password with at least 6 characters.');
       return;
     }
 
-    if (tab === 'signin') {
-      const result = login(cleanEmail, password);
-      if (!result.success) {
-        setError(result.error || 'Failed to sign in.');
-        if (result.error?.toLowerCase().includes('does not exist')) {
-          setShowSwitchToSignup(true);
+    setIsSubmitting(true);
+    try {
+      if (tab === 'signin') {
+        const result = await login(cleanEmail, password);
+        if (!result.success) {
+          setError(result.error || 'Failed to sign in.');
+          if (
+            result.error?.toLowerCase().includes('does not exist') ||
+            result.error?.toLowerCase().includes('invalid login credentials') ||
+            result.error?.toLowerCase().includes('sign up first')
+          ) {
+            setShowSwitchToSignup(true);
+          }
+        }
+      } else {
+        if (!name.trim()) {
+          setError('Please enter your full name.');
+          setIsSubmitting(false);
+          return;
+        }
+        const result = await signup(name, cleanEmail, brandName || 'My D2C Brand', password);
+        if (!result.success) {
+          setError(result.error || 'Failed to create account.');
+        } else {
+          // First-time user registered successfully! Direct them to sign in with their credentials
+          setSuccessMsg('Account created successfully in cloud! Please sign in with your credentials.');
+          setPassword('');
+          setTab('signin');
         }
       }
-    } else {
-      if (!name.trim()) {
-        setError('Please enter your full name.');
-        return;
-      }
-      const result = signup(name, cleanEmail, brandName || 'My D2C Brand', password);
-      if (!result.success) {
-        setError(result.error || 'Failed to create account.');
-      } else {
-        // First-time user registered successfully! Direct them to sign in with their credentials
-        setSuccessMsg('Account created successfully! Please sign in with your credentials.');
-        setPassword('');
-        setTab('signin');
-      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -237,10 +248,20 @@ export const AuthModal: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center space-x-1.5 cursor-pointer mt-4"
+            disabled={isSubmitting}
+            className="w-full py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center space-x-1.5 cursor-pointer disabled:cursor-not-allowed mt-4"
           >
-            <span>{tab === 'signin' ? 'Sign In to Dashboard' : 'Create Free Account'}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>{tab === 'signin' ? 'Signing In...' : 'Creating Account...'}</span>
+              </>
+            ) : (
+              <>
+                <span>{tab === 'signin' ? 'Sign In to Dashboard' : 'Create Free Account'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </>
+            )}
           </button>
         </form>
 
