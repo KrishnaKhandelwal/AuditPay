@@ -18,7 +18,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Check saved preference or system preference
-    const saved = localStorage.getItem('auditpay-theme') as Theme | null;
+    const saved = localStorage.getItem('auditpay-theme-v2') as Theme | null;
     const initialTheme: Theme = saved === 'dark' ? 'dark' : 'light';
 
     setThemeState(initialTheme);
@@ -32,7 +32,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem('auditpay-theme', newTheme);
+    localStorage.setItem('auditpay-theme-v2', newTheme);
     if (newTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

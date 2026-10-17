@@ -43,7 +43,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `
               (function() {
                 try {
-                  var saved = localStorage.getItem('auditpay-theme');
+                  localStorage.removeItem('auditpay-theme');
+                  var saved = localStorage.getItem('auditpay-theme-v2');
                   if (saved === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
