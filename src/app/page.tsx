@@ -9,7 +9,7 @@ import { DiscrepancyTable } from '@/components/DiscrepancyTable';
 import { SettlementRow, WarehouseRow, DiscrepancyItem, AuditSummary, PlatformType } from '@/types/audit';
 import { runReconciliationAudit } from '@/lib/reconciliationEngine';
 import { parseSettlementFile } from '@/lib/fileParsers';
-import { CheckCircle2, ShieldCheck, Zap, UserPlus } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Zap, UserPlus, Sparkles, UploadCloud } from 'lucide-react';
 import { useAudit } from '@/context/AuditContext';
 import { useAuth } from '@/context/AuthContext';
 
@@ -178,44 +178,50 @@ export default function Home() {
           /* State 3: Dashboard */
           <div className="space-y-6">
             
-            {/* When not signed in: show clear callout explaining empty state */}
-            {!isAuthenticated ? (
+            {/* If no data has been uploaded yet, show empty prompt */}
+            {!hasData ? (
               <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center shadow-xs">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3 shadow-xs">
                   <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
                 </div>
                 <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1">
-                  Sign In to Access Dashboard Data
+                  No Settlement File Uploaded Yet
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mb-4 px-2">
-                  The dashboard is currently empty. Sign in or create a merchant account to upload settlement files and populate your recovery widgets.
+                  Drop a CSV or Excel statement from Blinkit, Zepto, or Instamart to view live reconciliation metrics and recoverable deductions.
                 </p>
                 <button
-                  onClick={() => openAuthModal('Sign in or create an account to view and populate your audit dashboard')}
+                  onClick={() => directFileInputRef.current?.click()}
                   className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3 sm:py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02] cursor-pointer"
                 >
-                  <UserPlus className="w-3.5 h-3.5" />
-                  <span>Sign In / Create Account</span>
+                  <UploadCloud className="w-3.5 h-3.5" />
+                  <span>Upload Statement</span>
                 </button>
               </div>
-            ) : !hasData ? (
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-500">
-                <span>No settlement file uploaded yet. Drop a CSV or Excel statement to view live reconciliation metrics.</span>
+            ) : !isAuthenticated ? (
+              /* When viewing as a guest with active audit data: show friendly top banner */
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs">
+                <div className="flex items-center space-x-2.5 text-emerald-900 dark:text-emerald-200">
+                  <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>
+                    <strong>Guest Audit Preview:</strong> Showing summary & top 3 discrepancies. Sign up or log in to unlock all {discrepancies.length} line items for free.
+                  </span>
+                </div>
                 <button
-                  onClick={() => directFileInputRef.current?.click()}
-                  className="w-full sm:w-auto px-4 py-2 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer text-center shrink-0"
+                  onClick={() => openAuthModal('Create a free account or sign in to unlock your full discrepancy ledger')}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs cursor-pointer shrink-0 text-center"
                 >
-                  Upload Statement
+                  Sign Up Free
                 </button>
               </div>
             ) : null}
 
-            {/* KPI Cards: strictly null if unauthenticated */}
-            <SummaryCards summary={isAuthenticated ? summary : null} />
+            {/* KPI Cards: render live data whenever hasData is true */}
+            <SummaryCards summary={hasData ? summary : null} />
 
-            {/* Discrepancy Table: strictly empty array if unauthenticated */}
+            {/* Discrepancy Table: render live discrepancies whenever hasData is true */}
             <DiscrepancyTable 
-              discrepancies={isAuthenticated ? discrepancies : []} 
+              discrepancies={hasData ? discrepancies : []} 
               detectedPlatform={detectedPlatform} 
             />
 
