@@ -51,17 +51,20 @@ const PLAN_LIMITS: Record<PlanType, number> = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Fallback guest user template
-const createGuestUser = (): UserProfile => ({
-  id: 'guest_' + Math.random().toString(36).substring(2, 8),
-  name: 'Guest Merchant',
-  email: 'founder@d2cbrand.com',
-  brandName: 'My D2C Brand',
-  plan: 'free',
-  isPaid: false,
-  auditsUsedThisMonth: 0,
-  auditsLimit: PLAN_LIMITS.free,
-  joinedAt: new Date().toISOString(),
-});
+const createGuestUser = (): UserProfile => {
+  const guestUsed = typeof window !== 'undefined' ? Number(localStorage.getItem('auditpay_guest_audits') || 0) : 0;
+  return {
+    id: 'guest_' + Math.random().toString(36).substring(2, 8),
+    name: 'Guest Merchant',
+    email: 'founder@d2cbrand.com',
+    brandName: 'My D2C Brand',
+    plan: 'free',
+    isPaid: false,
+    auditsUsedThisMonth: guestUsed,
+    auditsLimit: PLAN_LIMITS.free,
+    joinedAt: new Date().toISOString(),
+  };
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -144,7 +147,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
-        setUser(mapSupabaseUserToProfile(data.user));
+        const mapped = mapSupabaseUserToProfile(data.user);
+        // If guest completed an audit before logging in, ensure their free account accounts for it
+        const guestUsed = typeof window !== 'undefined' ? Number(localStorage.getItem('auditpay_guest_audits') || 0) : 0;
+        if (guestUsed > 0 && mapped.plan === 'free' && mapped.auditsUsedThisMonth === 0) {
+          mapped.auditsUsedThisMonth = 1;
+          supabase.auth.updateUser({ data: { audits_used_this_month: 1 } }).catch(() => {});
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('auditpay_guest_audits');
+          }
+        }
+        setUser(mapped);
         closeAuthModal();
         return { success: true };
       }
@@ -163,6 +176,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     password: string
   ): Promise<{ success: boolean; error?: string }> => {
     const cleanEmail = email.trim().toLowerCase();
+    const guestUsed = typeof window !== 'undefined' ? Number(localStorage.getItem('auditpay_guest_audits') || 0) : 0;
+    const initialAuditsUsed = (user?.auditsUsedThisMonth && user.auditsUsedThisMonth > 0) || guestUsed > 0 ? 1 : 0;
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -174,7 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             brand_name: brandName.trim() || 'My D2C Brand',
             plan: 'free',
             is_paid: false,
-            audits_used_this_month: 0,
+            audits_used_this_month: initialAuditsUsed,
             audits_limit: PLAN_LIMITS.free,
           },
         },
@@ -191,6 +206,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
         }
         return { success: false, error: error.message };
+      }
+
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auditpay_guest_audits');
       }
 
       // Check if user session was automatically established or if email confirmation is required
@@ -244,6 +263,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const incrementAuditCount = async (): Promise<boolean> => {
     if (!user) return false;
+
+    // If user is guest, persist in localStorage and optimistic state
+    if (user.id.startsWith('guest_')) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('auditpay_guest_audits', '1');
+      }
+      setUser((prev) => (prev ? {
+        ...prev,
+        auditsUsedThisMonth: 1,
+      } : null));
+      return true;
+    }
+
     if (user.auditsUsedThisMonth >= user.auditsLimit && user.plan === 'free') {
       return false;
     }
@@ -276,6 +308,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const canPerformAudit = () => {
     if (!user) return true;
     if (isPaidUser) return true;
+    if (!isAuthenticated) {
+      const guestUsed = typeof window !== 'undefined' ? Number(localStorage.getItem('auditpay_guest_audits') || 0) : 0;
+      const count = Math.max(user.auditsUsedThisMonth, guestUsed);
+      return count < 1;
+    }
     return user.auditsUsedThisMonth < user.auditsLimit;
   };
 
@@ -284,7 +321,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const canViewAllDiscrepancies = () => {
-    return isPaidUser;
+    // Authenticated users (both free and paid) can view all rows of their audited statement
+    return isAuthenticated;
   };
 
   const canGenerateDisputeEmail = () => {

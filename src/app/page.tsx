@@ -50,16 +50,18 @@ export default function Home() {
     platform: PlatformType,
     fileName: string
   ) => {
-    // Require sign in before auditing data
+    // 1. If not authenticated, allow 1 free guest audit preview, otherwise ask to sign up
     if (!isAuthenticated) {
-      openAuthModal('Please sign in or create a free merchant account to audit your settlement statement.');
-      return;
-    }
-
-    // Check user audit quota before running
-    if (!canPerformAudit()) {
-      openPaywallModal('Monthly Audit Quota Limit Reached');
-      return;
+      if (!canPerformAudit()) {
+        openAuthModal('You have already used your 1 free guest audit preview. Create a free account or sign in to continue.');
+        return;
+      }
+    } else {
+      // 2. If authenticated, check user audit quota before running (e.g. Free plan user uploading 2nd time)
+      if (!canPerformAudit()) {
+        openPaywallModal('Monthly Audit Quota Limit Reached');
+        return;
+      }
     }
 
     setActiveFileName(fileName);

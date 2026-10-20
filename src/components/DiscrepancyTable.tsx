@@ -58,6 +58,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
     canGenerateDisputeEmail, 
     canViewAllDiscrepancies, 
     openPaywallModal,
+    openAuthModal,
     isAuthenticated,
     user 
   } = useAuth();
@@ -128,6 +129,10 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
   };
 
   const handleExportClick = () => {
+    if (!isAuthenticated) {
+      openAuthModal('Sign up for free or sign in to export your dispute claim package');
+      return;
+    }
     if (!canExportDisputePackage()) {
       openPaywallModal('Excel Dispute Claim Package');
       return;
@@ -159,6 +164,10 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
   };
 
   const handleGenerateEmailClick = () => {
+    if (!isAuthenticated) {
+      openAuthModal('Sign up for free or sign in to generate dispute letters');
+      return;
+    }
     if (!canGenerateDisputeEmail()) {
       openPaywallModal('Official Vendor SLA Dispute Email');
       return;
@@ -410,9 +419,12 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
           ))
         )}
 
-        {/* Locked Preview Cards for Free Plan */}
+        {/* Locked Preview Cards for Guest Preview */}
         {isFreePlan && lockedCount > 0 && (
-          <div className="p-4 rounded-xl border border-dashed border-amber-300 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-950/20 text-center space-y-1">
+          <div 
+            onClick={() => openAuthModal('Create a free account or sign in to unlock all ' + filtered.length + ' discrepancies')}
+            className="p-4 rounded-xl border border-dashed border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/30 text-center space-y-1.5 cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-900/30 transition shadow-2xs"
+          >
             <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 mx-auto" />
             <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
               +{lockedCount} More Disputed Items Locked
@@ -420,6 +432,9 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
               Worth ₹{lockedAmount.toLocaleString('en-IN')} in recoverable deductions
             </p>
+            <span className="inline-block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 underline underline-offset-2">
+              Sign Up Free to Unlock Full Report →
+            </span>
           </div>
         )}
       </div>
@@ -533,7 +548,7 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
         </table>
       </div>
 
-      {/* Paywall Callout Banner when items are locked */}
+      {/* Paywall Callout Banner when items are locked for Guest */}
       {isFreePlan && lockedCount > 0 && (
         <div className="p-4 sm:p-6 bg-gradient-to-r from-emerald-50/70 via-teal-50/70 to-emerald-50/70 dark:from-emerald-950/40 dark:via-slate-900 dark:to-emerald-950/40 border-t border-emerald-200/80 dark:border-emerald-800/60 text-center flex flex-col items-center justify-center">
           <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-emerald-700 dark:text-emerald-400 mb-3 shadow-sm">
@@ -544,14 +559,14 @@ export const DiscrepancyTable: React.FC<DiscrepancyTableProps> = ({
             🔒 {lockedCount} More Disputed Items Hidden (Valued at ₹{lockedAmount.toLocaleString('en-IN')})
           </h3>
           <p className="text-xs text-slate-600 dark:text-slate-300 max-w-md mb-4 px-2 leading-relaxed">
-            Free tier displays the top 3 high-impact discrepancies. Upgrade to Starter or Growth to unlock full SKU lines, dark-store city breakdown, and 1-click Excel claim packages.
+            Free preview displays the top 3 high-impact discrepancies. Sign up or log in with your free merchant account to unlock all {filtered.length} line items and view your full audit report.
           </p>
 
           <button
-            onClick={() => openPaywallModal('Complete Line-Item Ledger')}
+            onClick={() => openAuthModal('Create a free account or sign in to unlock all ' + filtered.length + ' discrepancies')}
             className="w-full sm:w-auto justify-center inline-flex items-center space-x-2 px-5 py-3 sm:py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-600/25 transition-all hover:scale-[1.02] cursor-pointer"
           >
-            <span>Unlock All {filtered.length} Discrepancies Now</span>
+            <span>Sign Up Free to Unlock All {filtered.length} Discrepancies</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
