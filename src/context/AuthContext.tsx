@@ -66,6 +66,50 @@ const createGuestUser = (): UserProfile => {
   };
 };
 
+interface LocalStoredAccount {
+  id: string;
+  name: string;
+  email: string;
+  brandName: string;
+  passwordHash: string;
+  plan: PlanType;
+  isPaid: boolean;
+  auditsUsedThisMonth: number;
+  auditsLimit: number;
+  joinedAt: string;
+}
+
+const getLocalAccounts = (): LocalStoredAccount[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem('auditpay_registered_accounts');
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveLocalAccounts = (accounts: LocalStoredAccount[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('auditpay_registered_accounts', JSON.stringify(accounts));
+  } catch (e) {
+    console.error('Failed to save local accounts', e);
+  }
+};
+
+const loadFallbackSession = (): UserProfile => {
+  if (typeof window === 'undefined') return createGuestUser();
+  try {
+    const raw = localStorage.getItem('auditpay_active_session');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.id) return parsed;
+    }
+  } catch {}
+  return createGuestUser();
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -98,15 +142,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let mounted = true;
 
-    // Check active session from Supabase
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!mounted) return;
-      if (session?.user) {
-        setUser(mapSupabaseUserToProfile(session.user));
-      } else {
-        setUser(createGuestUser());
-      }
-    });
+    // Check active session from Supabase (or fallback to local session if cloud is unreachable)
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!mounted) return;
+        if (session?.user) {
+          setUser(mapSupabaseUserToProfile(session.user));
+        } else {
+          setUser(loadFallbackSession());
+        }
+      })
+      .catch((err) => {
+        console.warn('Supabase getSession failed, using local session:', err);
+        if (mounted) {
+          setUser(loadFallbackSession());
+        }
+      });
 
     // Listen for state changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -114,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (session?.user) {
         setUser(mapSupabaseUserToProfile(session.user));
       } else {
-        setUser(createGuestUser());
+        setUser(loadFallbackSession());
       }
     });
 
@@ -123,6 +174,96 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
+
+  const loginWithLocalFallback = (cleanEmail: string, password: string): { success: boolean; error?: string } => {
+    const localAccs = getLocalAccounts();
+    const found = localAccs.find(a => a.email.toLowerCase() === cleanEmail);
+    if (!found) {
+      return {
+        success: false,
+        error: 'Account does not exist with this email. Please sign up first.',
+      };
+    }
+    if (found.passwordHash !== password) {
+      return {
+        success: false,
+        error: 'Incorrect password. Please verify and try again.',
+      };
+    }
+
+    const sessionProfile: UserProfile = {
+      id: found.id,
+      name: found.name,
+      email: found.email,
+      brandName: found.brandName,
+      plan: found.plan,
+      isPaid: found.isPaid,
+      auditsUsedThisMonth: found.auditsUsedThisMonth,
+      auditsLimit: found.auditsLimit,
+      joinedAt: found.joinedAt,
+    };
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auditpay_active_session', JSON.stringify(sessionProfile));
+      localStorage.removeItem('auditpay_guest_audits');
+    }
+    setUser(sessionProfile);
+    closeAuthModal();
+    return { success: true };
+  };
+
+  const signupWithLocalFallback = (
+    name: string,
+    cleanEmail: string,
+    brandName: string,
+    password: string,
+    initialAuditsUsed: number
+  ): { success: boolean; error?: string } => {
+    const localAccs = getLocalAccounts();
+    const existing = localAccs.find(a => a.email.toLowerCase() === cleanEmail);
+    if (existing) {
+      return {
+        success: false,
+        error: 'An account with this email already exists. Please sign in with your credentials.',
+      };
+    }
+
+    const newAcc: LocalStoredAccount = {
+      id: 'usr_' + Math.random().toString(36).substring(2, 9),
+      name: name.trim() || 'Merchant',
+      email: cleanEmail,
+      brandName: brandName.trim() || 'My D2C Brand',
+      passwordHash: password,
+      plan: 'free',
+      isPaid: false,
+      auditsUsedThisMonth: initialAuditsUsed,
+      auditsLimit: PLAN_LIMITS.free,
+      joinedAt: new Date().toISOString(),
+    };
+
+    saveLocalAccounts([...localAccs, newAcc]);
+
+    const sessionProfile: UserProfile = {
+      id: newAcc.id,
+      name: newAcc.name,
+      email: newAcc.email,
+      brandName: newAcc.brandName,
+      plan: newAcc.plan,
+      isPaid: newAcc.isPaid,
+      auditsUsedThisMonth: newAcc.auditsUsedThisMonth,
+      auditsLimit: newAcc.auditsLimit,
+      joinedAt: newAcc.joinedAt,
+    };
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auditpay_active_session', JSON.stringify(sessionProfile));
+      localStorage.removeItem('auditpay_guest_audits');
+    }
+
+    setUser(sessionProfile);
+    closeAuthModal();
+    return { success: true };
+  };
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const cleanEmail = email.trim().toLowerCase();
@@ -134,9 +275,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
+        const errLower = error.message.toLowerCase();
+        // If Supabase cloud is unreachable or paused, fall back to local authentication
+        if (errLower.includes('failed to fetch') || errLower.includes('network') || errLower.includes('fetch')) {
+          return loginWithLocalFallback(cleanEmail, password);
+        }
+
         if (
-          error.message.toLowerCase().includes('invalid login credentials') ||
-          error.message.toLowerCase().includes('invalid credentials')
+          errLower.includes('invalid login credentials') ||
+          errLower.includes('invalid credentials')
         ) {
           return {
             success: false,
@@ -148,7 +295,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         const mapped = mapSupabaseUserToProfile(data.user);
-        // If guest completed an audit before logging in, ensure their free account accounts for it
         const guestUsed = typeof window !== 'undefined' ? Number(localStorage.getItem('auditpay_guest_audits') || 0) : 0;
         if (guestUsed > 0 && mapped.plan === 'free' && mapped.auditsUsedThisMonth === 0) {
           mapped.auditsUsedThisMonth = 1;
@@ -157,6 +303,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem('auditpay_guest_audits');
           }
         }
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auditpay_active_session', JSON.stringify(mapped));
+        }
         setUser(mapped);
         closeAuthModal();
         return { success: true };
@@ -164,8 +313,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return { success: false, error: 'Failed to retrieve user session.' };
     } catch (err: any) {
-      console.error('Supabase login error:', err);
-      return { success: false, error: err.message || 'Network error occurred during login.' };
+      console.warn('Supabase login error, attempting fallback:', err);
+      return loginWithLocalFallback(cleanEmail, password);
     }
   };
 
@@ -196,9 +345,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
+        const errLower = error.message.toLowerCase();
+        // If Supabase cloud is unreachable or paused, fall back to local account registration
+        if (errLower.includes('failed to fetch') || errLower.includes('network') || errLower.includes('fetch')) {
+          return signupWithLocalFallback(name, cleanEmail, brandName, password, initialAuditsUsed);
+        }
+
         if (
-          error.message.toLowerCase().includes('already registered') ||
-          error.message.toLowerCase().includes('already exists')
+          errLower.includes('already registered') ||
+          errLower.includes('already exists')
         ) {
           return {
             success: false,
@@ -212,15 +367,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('auditpay_guest_audits');
       }
 
-      // Check if user session was automatically established or if email confirmation is required
+      // Check if user session was automatically established
       if (data.session && data.user) {
-        setUser(mapSupabaseUserToProfile(data.user));
+        const mapped = mapSupabaseUserToProfile(data.user);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auditpay_active_session', JSON.stringify(mapped));
+        }
+        setUser(mapped);
       }
 
       return { success: true };
     } catch (err: any) {
-      console.error('Supabase signup error:', err);
-      return { success: false, error: err.message || 'Network error occurred during registration.' };
+      console.warn('Supabase signup error, attempting fallback:', err);
+      return signupWithLocalFallback(name, cleanEmail, brandName, password, initialAuditsUsed);
     }
   };
 
@@ -230,6 +389,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (e) {
       console.error('Error signing out', e);
     } finally {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auditpay_active_session');
+      }
       setUser(createGuestUser());
     }
   };
@@ -239,15 +401,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isPaid = plan !== 'free';
     const auditsLimit = PLAN_LIMITS[plan];
 
-    // Optimistically update UI
-    setUser((prev) => (prev ? {
-      ...prev,
+    const updatedUser = {
+      ...user,
       plan,
       isPaid,
       auditsLimit,
-    } : null));
+    };
 
-    // Persist to Supabase cloud metadata
+    // Optimistically update UI
+    setUser(updatedUser);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auditpay_active_session', JSON.stringify(updatedUser));
+      const localAccs = getLocalAccounts();
+      const idx = localAccs.findIndex(a => a.id === user.id);
+      if (idx !== -1) {
+        localAccs[idx].plan = plan;
+        localAccs[idx].isPaid = isPaid;
+        localAccs[idx].auditsLimit = auditsLimit;
+        saveLocalAccounts(localAccs);
+      }
+    }
+
+    // Persist to Supabase cloud metadata if reachable
     try {
       await supabase.auth.updateUser({
         data: {
@@ -257,7 +433,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       });
     } catch (err) {
-      console.error('Failed to sync plan upgrade to Supabase:', err);
+      console.warn('Could not sync plan upgrade to Supabase (offline/paused):', err);
     }
   };
 
@@ -283,12 +459,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const newCount = user.auditsUsedThisMonth + 1;
 
     // Optimistically update UI
-    setUser((prev) => (prev ? {
-      ...prev,
+    const updatedUser = {
+      ...user,
       auditsUsedThisMonth: newCount,
-    } : null));
+    };
+    setUser(updatedUser);
 
-    // Persist to Supabase cloud metadata
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auditpay_active_session', JSON.stringify(updatedUser));
+      const localAccs = getLocalAccounts();
+      const idx = localAccs.findIndex(a => a.id === user.id);
+      if (idx !== -1) {
+        localAccs[idx].auditsUsedThisMonth = newCount;
+        saveLocalAccounts(localAccs);
+      }
+    }
+
+    // Persist to Supabase cloud metadata if reachable
     try {
       await supabase.auth.updateUser({
         data: {
@@ -296,7 +483,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       });
     } catch (err) {
-      console.error('Failed to sync audit count to Supabase:', err);
+      console.warn('Could not sync audit count to Supabase (offline/paused):', err);
     }
 
     return true;
